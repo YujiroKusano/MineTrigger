@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.sigulog.minetrigger.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "client-minetrigger-refmap.json",
+  "client": [
+    "MixinInventoryScreen"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

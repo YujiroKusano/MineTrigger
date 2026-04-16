@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.sigulog.minetrigger.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "MixinServerPlayNetworkHandler",
+    "MixinPlayerScreenHandler",
+    "MixinPlayerEntity",
+    "ScreenHandlerInvoker"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

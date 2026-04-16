@@ -1,0 +1,29 @@
+{
+  "item.minetrigger.kogetsu":       "弧月",
+  "item.minetrigger.scorpion":      "スコーピオン",
+  "item.minetrigger.raygust":       "レイガスト",
+
+  "item.minetrigger.handgun":       "ハンドガン",
+  "item.minetrigger.assault_rifle": "アサルトライフル",
+  "item.minetrigger.shotgun":       "ショットガン",
+  "item.minetrigger.gatling":       "ガトリング",
+  "item.minetrigger.grenade_gun":   "グレネードガン",
+
+  "item.minetrigger.asteroid":      "アステロイド",
+  "item.minetrigger.meteora":       "メテオラ",
+  "item.minetrigger.hound":         "ハウンド",
+  "item.minetrigger.viper":         "バイパー",
+  "item.minetrigger.red_bullet":    "レッドバレット",
+
+  "item.minetrigger.eaglet":        "イーグレット",
+  "item.minetrigger.lightning":     "ライトニング",
+  "item.minetrigger.ibis":          "アイビス",
+
+  "item.minetrigger.shield":        "シールド",
+  "item.minetrigger.escudo":        "エスクード",
+
+  "item.minetrigger.bagworm":       "バッグワーム",
+  "item.minetrigger.grasshopper":   "グラスホッパー",
+  "item.minetrigger.spider":        "スパイダー",
+  "item.minetrigger.switchbox":     "スイッチボックス"
+}
