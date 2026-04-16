@@ -2,10 +2,12 @@ package com.sigulog.minetrigger.weapon.defense;
 
 import com.sigulog.minetrigger.config.ModConfig;
 import com.sigulog.minetrigger.config.WeaponParams;
+import com.sigulog.minetrigger.core.CooldownManager;
 import com.sigulog.minetrigger.core.ShieldManager;
 import com.sigulog.minetrigger.weapon.WeaponType;
 import com.sigulog.minetrigger.weapon.base.WeaponItem;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 
@@ -21,6 +23,23 @@ public class ShieldItem extends WeaponItem {
 
     public ShieldItem(WeaponType type, Settings settings) {
         super(type, settings);
+    }
+
+    /** シールドはトリオン消費なし。クールダウンのみ管理する。 */
+    @Override
+    public boolean tryActivate(ServerPlayerEntity player, Hand hand) {
+        if (CooldownManager.isOnCooldown(player, weaponType.configKey)) {
+            player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 0.5f, 0.5f);
+            return false;
+        }
+        WeaponParams p = ModConfig.get().getWeaponParams(weaponType.configKey);
+        if (player.isSneaking()) {
+            activateSpecial(player, hand);
+        } else {
+            activateNormal(player, hand);
+        }
+        CooldownManager.startCooldown(player, weaponType.configKey, p.cooldownTicks);
+        return true;
     }
 
     @Override

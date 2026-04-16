@@ -25,5 +25,7 @@
   "item.minetrigger.bagworm":       "バッグワーム",
   "item.minetrigger.grasshopper":   "グラスホッパー",
   "item.minetrigger.spider":        "スパイダー",
-  "item.minetrigger.switchbox":     "スイッチボックス"
+  "item.minetrigger.switchbox":     "スイッチボックス",
+
+  "item.minetrigger.composite_round": "Composite Round"
 }

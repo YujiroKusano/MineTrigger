@@ -38,7 +38,10 @@ public enum WeaponType {
     BAGWORM("bagworm"),
     GRASSHOPPER("grasshopper"),
     SPIDER("spider"),
-    SWITCHBOX("switchbox");
+    SWITCHBOX("switchbox"),
+
+    // ── 合成弾 ──
+    COMPOSITE_ROUND("composite_round");
 
     /** config.yml の weapons（またはoptions）下のキー名 */
     public final String configKey;
@@ -51,6 +54,23 @@ public enum WeaponType {
     public boolean isOption() {
         return switch (this) {
             case BAGWORM, GRASSHOPPER, SPIDER, SWITCHBOX -> true;
+            default -> false;
+        };
+    }
+
+    /** isGun: スコープ対応の銃系武器かどうか */
+    public boolean isGun() {
+        return switch (this) {
+            case HANDGUN, ASSAULT_RIFLE, SHOTGUN, GATLING, GRENADE_GUN,
+                 EAGLET, LIGHTNING, IBIS -> true;
+            default -> false;
+        };
+    }
+
+    /** isSniper: スナイパー系（高倍率スコープ）かどうか */
+    public boolean isSniper() {
+        return switch (this) {
+            case EAGLET, LIGHTNING, IBIS -> true;
             default -> false;
         };
     }

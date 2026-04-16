@@ -28,7 +28,9 @@ public class IbisItem extends ProjectileWeaponItem {
         Vec3d look  = player.getRotationVec(1.0f).normalize();
         Vec3d start = player.getEyePos().add(look.multiply(0.5));
         BulletManager.fire(player, start, look,
-            BulletManager.BulletOptions.builder(p.speed * 1.5, p.range, (float) (p.damage * 3.0)).build());
+            BulletManager.BulletOptions.builder(p.speed * 1.5, p.range, (float) (p.damage * 3.0))
+                .blockDestroy(1.5)
+                .build());
         player.sendMessage(Text.literal("§c[ アイビス ]§r 高威力弾"), true);
     }
 
@@ -40,6 +42,7 @@ public class IbisItem extends ProjectileWeaponItem {
         BulletManager.fire(player, start, look,
             BulletManager.BulletOptions.builder(p.speed * 1.5, p.range, (float) (p.damage * 2.0))
                 .splash(p.splashRadius)
+                .blockDestroy(p.splashRadius)
                 .build());
         player.sendMessage(Text.literal("§4[ アイビス ]§r 爆破弾"), true);
     }

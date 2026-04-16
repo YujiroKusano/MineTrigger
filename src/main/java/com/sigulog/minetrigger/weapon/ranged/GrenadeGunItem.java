@@ -32,6 +32,7 @@ public class GrenadeGunItem extends ProjectileWeaponItem {
         BulletManager.fire(player, start, look,
             BulletManager.BulletOptions.builder(p.speed * 0.6, p.range, (float) p.damage)
                 .splash(p.splashRadius)
+                .blockDestroy(p.splashRadius)
                 .effect(StatusEffects.SLOWNESS, p.slownessDurationTicks, p.slownessLevel - 1)
                 .build());
         player.sendMessage(Text.literal("§2[ グレネードガン ]§r 爆発弾発射"), true);
@@ -46,6 +47,7 @@ public class GrenadeGunItem extends ProjectileWeaponItem {
         BulletManager.fire(player, start, look,
             BulletManager.BulletOptions.builder(p.speed * 1.5, p.range, (float) (p.damage * 1.2))
                 .splash(p.splashRadius * 1.5)
+                .blockDestroy(p.splashRadius * 1.5)
                 .effect(StatusEffects.SLOWNESS, p.slownessDurationTicks / 2, p.slownessLevel - 1)
                 .build());
         player.sendMessage(Text.literal("§a[ グレネードガン ]§r 高速爆発弾発射"), true);

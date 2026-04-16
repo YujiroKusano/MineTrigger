@@ -50,7 +50,7 @@ public class WeaponItem extends Item {
         ItemStack stack = player.getStackInHand(hand);
 
         if (world.isClient) {
-            return TypedActionResult.success(stack);
+            return TypedActionResult.fail(stack);
         }
 
         ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;

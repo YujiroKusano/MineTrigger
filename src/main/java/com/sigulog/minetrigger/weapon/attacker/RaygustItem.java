@@ -26,7 +26,7 @@ public class RaygustItem extends KogetsuItem {
     /** 盾モード中のプレイヤーUUID */
     private static final Set<UUID> shieldMode = new HashSet<>();
 
-    private static final int SHIELD_DURATION = 80; // 4秒
+    private static final int SHIELD_DURATION = 60; // 3秒（シールドと同じ）
 
     public RaygustItem(WeaponType type, Settings settings) {
         super(type, settings);

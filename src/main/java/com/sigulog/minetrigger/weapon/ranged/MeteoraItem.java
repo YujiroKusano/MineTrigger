@@ -30,6 +30,7 @@ public class MeteoraItem extends ProjectileWeaponItem {
         BulletManager.fire(player, start, look,
             BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage)
                 .splash(p.splashRadius)
+                .blockDestroy(p.splashRadius)
                 .build());
         player.sendMessage(Text.literal("§c[ メテオラ ]§r 爆発弾発射"), true);
     }
@@ -42,6 +43,7 @@ public class MeteoraItem extends ProjectileWeaponItem {
         BulletManager.fire(player, start, look,
             BulletManager.BulletOptions.builder(p.speed * 2.0, p.range, (float) p.damage)
                 .splash(p.splashRadius * 1.5)
+                .blockDestroy(p.splashRadius * 1.5)
                 .build());
         player.sendMessage(Text.literal("§4[ メテオラ ]§r 高速爆発弾発射"), true);
     }

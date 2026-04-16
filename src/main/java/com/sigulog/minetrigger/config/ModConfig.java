@@ -113,6 +113,16 @@ public final class ModConfig {
             }
         }
 
+        // composite section (合成弾パラメータ)
+        if (root.get("composite") instanceof Map<?, ?> compMap) {
+            for (Map.Entry<?, ?> entry : compMap.entrySet()) {
+                String key = String.valueOf(entry.getKey());
+                if (entry.getValue() instanceof Map<?, ?> wMap) {
+                    cfg.weapons.put(key, parseWeapon((Map<String, Object>) wMap));
+                }
+            }
+        }
+
         return cfg;
     }
 
@@ -227,7 +237,7 @@ public final class ModConfig {
             range: 2.0
             cooldown_ticks: 12
             trion_use: 5
-            damage_reduction: 0.6
+            damage_reduction: 0.35
 
           handgun:
             trion_equip_cost: 4
@@ -372,5 +382,17 @@ public final class ModConfig {
             trion_equip_cost: 5
             max_placed: 3
             trion_use: 3
+
+        composite:
+
+          composite_round:
+            trion_equip_cost: 12
+            damage: 7
+            range: 20.0
+            speed: 1.0
+            splash_radius: 3.0
+            tracking_speed: 0.3
+            cooldown_ticks: 20
+            trion_use: 10
         """;
 }

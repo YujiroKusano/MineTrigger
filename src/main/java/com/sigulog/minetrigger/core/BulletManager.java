@@ -1,6 +1,7 @@
 package com.sigulog.minetrigger.core;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -10,6 +11,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
@@ -52,6 +54,8 @@ public final class BulletManager {
         public final int effectDuration;
         public final int effectAmplifier;
         public final boolean shieldPenetrating;
+        /** ブロック破壊半径（0 = 破壊なし）。ベドロックは破壊しない。 */
+        public final double blockDestroyRadius;
 
         private BulletOptions(Builder b) {
             this.speed = b.speed;
@@ -63,6 +67,7 @@ public final class BulletManager {
             this.effectDuration = b.effectDuration;
             this.effectAmplifier = b.effectAmplifier;
             this.shieldPenetrating = b.shieldPenetrating;
+            this.blockDestroyRadius = b.blockDestroyRadius;
         }
 
         public static BulletOptions basic(double speed, double range, float damage) {
@@ -82,6 +87,7 @@ public final class BulletManager {
             private int effectDuration = 0;
             private int effectAmplifier = 0;
             private boolean shieldPenetrating = false;
+            private double blockDestroyRadius = 0;
 
             Builder(double speed, double range, float damage) {
                 this.speed = speed;
@@ -108,6 +114,11 @@ public final class BulletManager {
 
             public Builder shieldPenetrating() {
                 this.shieldPenetrating = true;
+                return this;
+            }
+
+            public Builder blockDestroy(double radius) {
+                this.blockDestroyRadius = radius;
                 return this;
             }
 
@@ -196,8 +207,12 @@ public final class BulletManager {
                 shooter
             ));
             if (blockHit.getType() != HitResult.Type.MISS) {
+                Vec3d hitPos = blockHit.getPos();
+                if (opts.blockDestroyRadius > 0) {
+                    destroyBlocks(world, hitPos, opts.blockDestroyRadius);
+                }
                 if (opts.splashRadius > 0) {
-                    doSplash(world, blockHit.getPos());
+                    doSplash(world, hitPos);
                 }
                 return true;
             }
@@ -254,6 +269,26 @@ public final class BulletManager {
             // 爆発パーティクル
             world.spawnParticles(ParticleTypes.EXPLOSION,
                 center.x, center.y, center.z, 5, r * 0.3, r * 0.3, r * 0.3, 0.1);
+        }
+
+        /** 球形範囲内のブロックを破壊する（ベドロックと空気は除外、ドロップなし） */
+        private void destroyBlocks(ServerWorld world, Vec3d center, double radius) {
+            int r = (int) Math.ceil(radius);
+            BlockPos centerPos = BlockPos.ofFloored(center);
+            double r2 = radius * radius;
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dy = -r; dy <= r; dy++) {
+                    for (int dz = -r; dz <= r; dz++) {
+                        if (dx * dx + dy * dy + dz * dz > r2) continue;
+                        BlockPos pos = centerPos.add(dx, dy, dz);
+                        var state = world.getBlockState(pos);
+                        if (state.isAir()) continue;
+                        // ベドロック（hardness < 0）は破壊しない
+                        if (state.getHardness(world, pos) < 0) continue;
+                        world.setBlockState(pos, Blocks.AIR.getDefaultState());
+                    }
+                }
+            }
         }
 
         /** シールド軽減を考慮した有効ダメージを計算する */

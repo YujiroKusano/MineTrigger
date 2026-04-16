@@ -5,6 +5,7 @@ import com.sigulog.minetrigger.weapon.attacker.KogetsuItem;
 import com.sigulog.minetrigger.weapon.attacker.RaygustItem;
 import com.sigulog.minetrigger.weapon.attacker.ScorpionItem;
 import com.sigulog.minetrigger.weapon.base.WeaponItem;
+import com.sigulog.minetrigger.weapon.composite.CompositeRoundItem;
 import com.sigulog.minetrigger.weapon.defense.EscudoItem;
 import com.sigulog.minetrigger.weapon.defense.ShieldItem;
 import com.sigulog.minetrigger.weapon.option.BagwormItem;
@@ -58,6 +59,8 @@ public final class ModItems {
         RegistryKey.of(RegistryKeys.ITEM_GROUP, Identifier.of(MineTriggerMod.MOD_ID, "defense"));
     public static final RegistryKey<ItemGroup> GROUP_OPTION =
         RegistryKey.of(RegistryKeys.ITEM_GROUP, Identifier.of(MineTriggerMod.MOD_ID, "option"));
+    public static final RegistryKey<ItemGroup> GROUP_COMPOSITE =
+        RegistryKey.of(RegistryKeys.ITEM_GROUP, Identifier.of(MineTriggerMod.MOD_ID, "composite"));
 
     public static void register() {
         // ── アイテム登録 ──────────────────────────────────────────
@@ -121,6 +124,14 @@ public final class ModItems {
                     addIfPresent(entries, WeaponType.BAGWORM, WeaponType.GRASSHOPPER,
                         WeaponType.SPIDER, WeaponType.SWITCHBOX))
                 .build());
+
+        Registry.register(Registries.ITEM_GROUP, GROUP_COMPOSITE,
+            FabricItemGroup.builder()
+                .icon(() -> new ItemStack(WEAPON_ITEMS.get(WeaponType.COMPOSITE_ROUND)))
+                .displayName(Text.literal("MT: 合成弾"))
+                .entries((ctx, entries) ->
+                    addIfPresent(entries, WeaponType.COMPOSITE_ROUND))
+                .build());
     }
 
     private static void addIfPresent(ItemGroup.Entries entries, WeaponType... types) {
@@ -166,6 +177,9 @@ public final class ModItems {
             case BAGWORM     -> new BagwormItem(type, s);
             case SPIDER      -> new SpiderItem(type, s);
             case SWITCHBOX   -> new SwitchboxItem(type, s);
+
+            // ── 合成弾 ──
+            case COMPOSITE_ROUND -> new CompositeRoundItem(type, s);
         };
     }
 

@@ -70,6 +70,20 @@ public final class MineTriggerNetwork {
     }
 
     // ──────────────────────────────────────────────────────────────
+    // C2S: 合成弾ラジアルメニューの選択
+    // ──────────────────────────────────────────────────────────────
+    public record CompositeSelectPayload(int sector) implements CustomPayload {
+        public static final Id<CompositeSelectPayload> ID =
+            new Id<>(Identifier.of(MineTriggerMod.MOD_ID, "composite_select"));
+        public static final PacketCodec<PacketByteBuf, CompositeSelectPayload> CODEC =
+            PacketCodec.tuple(
+                PacketCodecs.INTEGER, CompositeSelectPayload::sector,
+                CompositeSelectPayload::new
+            );
+        @Override public Id<? extends CustomPayload> getId() { return ID; }
+    }
+
+    // ──────────────────────────────────────────────────────────────
     // 登録
     // ──────────────────────────────────────────────────────────────
 
@@ -83,7 +97,8 @@ public final class MineTriggerNetwork {
         PayloadTypeRegistry.playS2C().register(TriggerFrameSyncPayload.ID,  TriggerFrameSyncPayload.CODEC);
 
         // C2S 登録
-        PayloadTypeRegistry.playC2S().register(TriggerActivatePayload.ID, TriggerActivatePayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(TriggerActivatePayload.ID,  TriggerActivatePayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(CompositeSelectPayload.ID,  CompositeSelectPayload.CODEC);
 
         // 数字キー → トリガー発動
         ServerPlayNetworking.registerGlobalReceiver(TriggerActivatePayload.ID, (payload, context) -> {
@@ -91,6 +106,21 @@ public final class MineTriggerNetwork {
             int slot = payload.slot();
             if (slot < 0 || slot >= TriggerFrameManager.SLOT_COUNT) return;
             context.server().execute(() -> TriggerFrameManager.activate(player, slot));
+        });
+
+        // 合成弾モード選択
+        ServerPlayNetworking.registerGlobalReceiver(CompositeSelectPayload.ID, (payload, context) -> {
+            ServerPlayerEntity player = context.player();
+            int sector = payload.sector();
+            context.server().execute(() -> {
+                com.sigulog.minetrigger.weapon.composite.CompositeRoundItem.setMode(
+                    player.getUuid(), sector);
+                var mode = com.sigulog.minetrigger.weapon.composite.CompositeRoundItem
+                    .getMode(player.getUuid());
+                player.sendMessage(
+                    net.minecraft.text.Text.literal(
+                        "§e[ 合成弾 ]§r " + mode.color + mode.displayName), true);
+            });
         });
     }
 

@@ -5,7 +5,9 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "client-minetrigger-refmap.json",
   "client": [
-    "MixinInventoryScreen"
+    "MixinInventoryScreen",
+    "MixinClientPlayerEntity",
+    "MixinGameRenderer"
   ],
   "injectors": {
     "defaultRequire": 1

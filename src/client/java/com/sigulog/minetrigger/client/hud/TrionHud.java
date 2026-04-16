@@ -1,10 +1,14 @@
 package com.sigulog.minetrigger.client.hud;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.sigulog.minetrigger.client.MineTriggerClient;
+import com.sigulog.minetrigger.client.ScopeHandler;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.*;
 import net.minecraft.text.Text;
+import org.joml.Matrix4f;
 
 /**
  * クライアントサイドの HUD。
@@ -71,6 +75,7 @@ public final class TrionHud {
 
             renderTrionBar(ctx, client, MARGIN_X, sh - MARGIN_BOTTOM);
             renderTriggerPanel(ctx, client, sh);
+            if (ScopeHandler.showOverlay()) renderScopeOverlay(ctx, sw, sh);
         });
     }
 
@@ -196,6 +201,86 @@ public final class TrionHud {
     /** インベントリ画面から参照するためのスナップショット */
     public static String[] getTriggerFrameKeys() {
         return triggerFrameKeys.clone();
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // スコープオーバーレイ
+    // ──────────────────────────────────────────────────────────────
+
+    private static void renderScopeOverlay(DrawContext ctx, int sw, int sh) {
+        float cx = sw / 2f;
+        float cy = sh / 2f;
+        // スコープ円の半径: 画面短辺の38%
+        float r  = Math.min(sw, sh) * 0.38f;
+
+        // ── 四辺の暗いマスク（中央円の外側を覆う矩形4枚） ─────────────
+        int dark = 0xFF000000;
+        int ri = (int) r;
+        ctx.fill(0,         0,          sw,          (int)(cy - r), dark); // 上
+        ctx.fill(0,         (int)(cy+r), sw,          sh,            dark); // 下
+        ctx.fill(0,         (int)(cy-r), (int)(cx-r), (int)(cy+r),   dark); // 左
+        ctx.fill((int)(cx+r),(int)(cy-r), sw,          (int)(cy+r),   dark); // 右
+
+        Matrix4f mat = ctx.getMatrices().peek().getPositionMatrix();
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+
+        // ── スコープ円の外縁リング ──────────────────────────────────
+        drawScopeRing(mat, cx, cy, r, r + 6f);
+
+        // ── 十字線 ────────────────────────────────────────────────
+        drawScopeCross(mat, cx, cy, r);
+
+        RenderSystem.disableBlend();
+    }
+
+    /** スコープ円の外縁リング（黒い太いリング） */
+    private static void drawScopeRing(Matrix4f m, float cx, float cy, float inner, float outer) {
+        int seg = 64;
+        Tessellator tess = Tessellator.getInstance();
+        BufferBuilder buf = tess.begin(VertexFormat.DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
+        for (int i = 0; i <= seg; i++) {
+            float a   = (float)(i * 2 * Math.PI / seg);
+            float cos = (float)Math.cos(a);
+            float sin = (float)Math.sin(a);
+            buf.vertex(m, cx + outer * cos, cy + outer * sin, 0).color(0, 0, 0, 255);
+            buf.vertex(m, cx + inner * cos, cy + inner * sin, 0).color(0, 0, 0, 0);
+        }
+        BufferRenderer.drawWithGlobalProgram(buf.end());
+    }
+
+    /** 十字線（4本の短い線） */
+    private static void drawScopeCross(Matrix4f m, float cx, float cy, float r) {
+        float gapLen  = r * 0.12f; // 中央の空白
+        float lineLen = r * 0.22f; // 線の長さ
+        int   alpha   = 180;
+
+        Tessellator tess = Tessellator.getInstance();
+
+        // 横線（左・右）
+        for (int sign : new int[]{-1, 1}) {
+            float x0 = cx + sign * gapLen;
+            float x1 = cx + sign * (gapLen + lineLen);
+            BufferBuilder buf = tess.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+            buf.vertex(m, x0, cy - 0.5f, 0).color(255, 255, 255, alpha);
+            buf.vertex(m, x1, cy - 0.5f, 0).color(255, 255, 255, alpha);
+            buf.vertex(m, x1, cy + 0.5f, 0).color(255, 255, 255, alpha);
+            buf.vertex(m, x0, cy + 0.5f, 0).color(255, 255, 255, alpha);
+            BufferRenderer.drawWithGlobalProgram(buf.end());
+        }
+
+        // 縦線（上・下）
+        for (int sign : new int[]{-1, 1}) {
+            float y0 = cy + sign * gapLen;
+            float y1 = cy + sign * (gapLen + lineLen);
+            BufferBuilder buf = tess.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+            buf.vertex(m, cx - 0.5f, y0, 0).color(255, 255, 255, alpha);
+            buf.vertex(m, cx + 0.5f, y0, 0).color(255, 255, 255, alpha);
+            buf.vertex(m, cx + 0.5f, y1, 0).color(255, 255, 255, alpha);
+            buf.vertex(m, cx - 0.5f, y1, 0).color(255, 255, 255, alpha);
+            BufferRenderer.drawWithGlobalProgram(buf.end());
+        }
     }
 
     private TrionHud() {}
