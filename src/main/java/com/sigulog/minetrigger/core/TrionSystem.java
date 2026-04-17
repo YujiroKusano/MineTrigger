@@ -251,6 +251,21 @@ public final class TrionSystem {
             player.setHealth(player.getMaxHealth());
         }
 
+        // ── トリオン自動回復（1秒 = 20tick ごとに適用） ──────────────
+        ModConfig cfg = ModConfig.get();
+        if (cfg.trionRegen) {
+            long worldTime = player.getServerWorld().getTime();
+            if (worldTime % 20 == 0) {
+                float current = getTrion(player);
+                float max = getMaxTrion(player);
+                if (current < max) {
+                    float newTrion = Math.min(current + (float) cfg.trionRegenPerSecond, max);
+                    player.setAttached(TrionDataAttachments.TRION_CURRENT, newTrion);
+                    syncToClient(player, newTrion, max);
+                }
+            }
+        }
+
         // ── ジャンプ時の水平慣性ブースト ─────────────────────────────
         boolean onGround = player.isOnGround();
         Boolean prev = prevOnGround.get(player.getUuid());

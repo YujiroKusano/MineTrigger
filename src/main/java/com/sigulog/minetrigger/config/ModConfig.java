@@ -23,13 +23,15 @@ public final class ModConfig {
     private static ModConfig INSTANCE = new ModConfig();
 
     // ── プレイヤー基本ステータス ──
-    public int baseTrion = 100;
+    public int baseTrion = 500;
     public double moveSpeed = 1.5;
     public double jumpBoost = 2.0;
     public double attackPowerMultiplier = 0.5;
 
     // ── ゲームルール ──
-    public boolean trionRegen = false;
+    public boolean trionRegen = true;
+    /** トリオン自動回復量（/秒）。trionRegen が false の場合は無視される */
+    public double trionRegenPerSecond = 10.0;
     public double criticalRateBase = 0.1;
     public double criticalDamageMultiplier = 2.0;
 
@@ -89,6 +91,7 @@ public final class ModConfig {
         // game section
         if (root.get("game") instanceof Map<?, ?> game) {
             cfg.trionRegen              = asBool(game.get("trion_regen"), cfg.trionRegen);
+            cfg.trionRegenPerSecond     = asDouble(game.get("trion_regen_per_second"), cfg.trionRegenPerSecond);
             cfg.criticalRateBase        = asDouble(game.get("critical_rate_base"), cfg.criticalRateBase);
             cfg.criticalDamageMultiplier = asDouble(game.get("critical_damage_multiplier"), cfg.criticalDamageMultiplier);
         }
@@ -205,13 +208,14 @@ public final class ModConfig {
         # ============================================================
 
         player:
-          base_trion: 100
+          base_trion: 500
           move_speed: 1.5
           jump_boost: 2.0
           attack_power_multiplier: 0.5
 
         game:
-          trion_regen: false
+          trion_regen: true
+          trion_regen_per_second: 10.0
           critical_rate_base: 0.1
           critical_damage_multiplier: 2.0
 
@@ -295,6 +299,7 @@ public final class ModConfig {
           meteora:
             trion_equip_cost: 7
             damage: 9
+            range: 30.0
             splash_radius: 3.0
             mine_trigger_radius: 2.0
             speed: 2.5
@@ -314,6 +319,7 @@ public final class ModConfig {
           viper:
             trion_equip_cost: 8
             damage: 6
+            range: 35.0
             max_nodes: 5
             node_duration_seconds: 8
             speed: 2.5
@@ -324,6 +330,7 @@ public final class ModConfig {
           red_bullet:
             trion_equip_cost: 7
             damage: 0
+            range: 25.0
             slowness_level: 3
             slowness_duration_ticks: 100
             speed: 1.5
