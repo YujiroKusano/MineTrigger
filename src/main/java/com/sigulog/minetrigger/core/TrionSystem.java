@@ -111,8 +111,10 @@ public final class TrionSystem {
         // 速度・ジャンプ属性モディファイアを追加（重複防止のため先に削除）
         applyAttributeModifiers(player);
 
-        // トリオン最大値を取得（未設定なら基礎値で初期化）
-        float max = player.getAttachedOrSet(TrionDataAttachments.TRION_MAX, (float) ModConfig.get().baseTrion);
+        // 常に config の baseTrion で最大値を初期化（旧セーブデータの古い値を上書き）
+        // LoadoutManager が1秒以内に装備コストを差し引いた正確な値に更新する
+        float max = (float) ModConfig.get().baseTrion;
+        player.setAttached(TrionDataAttachments.TRION_MAX, max);
         // リスポーン・参加時は常にトリオンを満タンに回復
         player.setAttached(TrionDataAttachments.TRION_CURRENT, max);
 
