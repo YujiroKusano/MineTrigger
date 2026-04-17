@@ -1,1 +1,6 @@
-{ "parent": "minecraft:item/bow" }
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minetrigger:item/eaglet"
+  }
+}

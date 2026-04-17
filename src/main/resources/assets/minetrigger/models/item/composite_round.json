@@ -1,1 +1,6 @@
-{ "parent": "minecraft:item/nether_star" }
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minetrigger:item/composite_round"
+  }
+}

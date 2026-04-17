@@ -1,1 +1,6 @@
-{ "parent": "minecraft:item/arrow" }
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minetrigger:item/viper"
+  }
+}

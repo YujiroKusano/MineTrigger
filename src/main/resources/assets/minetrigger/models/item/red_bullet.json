@@ -1,1 +1,6 @@
-{ "parent": "minecraft:item/spectral_arrow" }
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minetrigger:item/red_bullet"
+  }
+}

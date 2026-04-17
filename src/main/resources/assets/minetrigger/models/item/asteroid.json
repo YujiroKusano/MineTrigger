@@ -1,1 +1,6 @@
-{ "parent": "minecraft:item/blaze_rod" }
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minetrigger:item/asteroid"
+  }
+}
