@@ -71,6 +71,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 
 ### 弧月
 
+<img src="../src/main/resources/assets/minetrigger/textures/item/kogetsu.png" width="64">
+
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
 | 8 | 3m（旋空6m） | 5 | 片手 | 10 tick | 5 |
@@ -89,6 +91,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 
 ### スコーピオン
 
+<img src="../src/main/resources/assets/minetrigger/textures/item/scorpion.png" width="64">
+
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
 | 6 | 2m | 5 | 片手 | 8 tick | 4 |
@@ -104,6 +108,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 ---
 
 ### レイガスト
+
+<img src="../src/main/resources/assets/minetrigger/textures/item/raygust.png" width="64">
 
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
@@ -133,6 +139,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 
 ### ハンドガン
 
+<img src="../src/main/resources/assets/minetrigger/textures/item/handgun.png" width="64">
+
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
 | 5 | 50m | 4 | 片手 | 12 tick | 4 |
@@ -150,6 +158,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 ---
 
 ### アサルトライフル
+
+<img src="../src/main/resources/assets/minetrigger/textures/item/assault_rifle.png" width="64">
 
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
@@ -169,6 +179,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 
 ### ショットガン
 
+<img src="../src/main/resources/assets/minetrigger/textures/item/shotgun.png" width="64">
+
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
 | 7 × 6発（最大42） | 20m | 6 | 両手 | 20 tick | 6 |
@@ -187,6 +199,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 
 ### ガトリング
 
+<img src="../src/main/resources/assets/minetrigger/textures/item/gatling.png" width="64">
+
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
 | 6 / 発 | 80m | 10 | 両手 | 4 tick | 10 |
@@ -204,6 +218,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 ---
 
 ### グレネードガン
+
+<img src="../src/main/resources/assets/minetrigger/textures/item/grenade_gun.png" width="64">
 
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
@@ -229,6 +245,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 
 ### アステロイド
 
+<img src="../src/main/resources/assets/minetrigger/textures/item/asteroid.png" width="64">
+
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
 | 7 / 発 | 40m | 5（設置時） | 片手 | 15 tick（発射）/ 5 tick（設置） | 6 |
@@ -246,6 +264,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 ---
 
 ### メテオラ
+
+<img src="../src/main/resources/assets/minetrigger/textures/item/meteora.png" width="64">
 
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
@@ -265,6 +285,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 
 ### ハウンド
 
+<img src="../src/main/resources/assets/minetrigger/textures/item/hound.png" width="64">
+
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
 | 5 | 40m | 5 | 片手 | 15 tick | 6 |
@@ -281,6 +303,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 
 ### バイパー
 
+<img src="../src/main/resources/assets/minetrigger/textures/item/viper.png" width="64">
+
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
 | 6 / 発 | 35m | 7 | 片手 | 20 tick | 8 |
@@ -296,6 +320,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 ---
 
 ### レッドバレット（鉛弾）
+
+<img src="../src/main/resources/assets/minetrigger/textures/item/red_bullet.png" width="64">
 
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
@@ -323,6 +349,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 
 ### イーグレット
 
+<img src="../src/main/resources/assets/minetrigger/textures/item/eaglet.png" width="64">
+
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
 | 8（通常）/ 20（チャージ） | 300m | 7 | 両手 | 40 tick | 8 |
@@ -341,6 +369,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 
 ### ライトニング
 
+<img src="../src/main/resources/assets/minetrigger/textures/item/lightning.png" width="64">
+
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
 | 5 / 発 | 200m | 6 | 両手 | 35 tick | 7 |
@@ -358,6 +388,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 ---
 
 ### アイビス
+
+<img src="../src/main/resources/assets/minetrigger/textures/item/ibis.png" width="64">
 
 | 威力 | 射程 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|---|
@@ -383,6 +415,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 
 ### シールド
 
+<img src="../src/main/resources/assets/minetrigger/textures/item/shield.png" width="64">
+
 | ダメージ軽減率 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|---|
 | 50%（集中75%） | 3 | 片手 | — | 3 |
@@ -400,6 +434,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 ---
 
 ### エスクード
+
+<img src="../src/main/resources/assets/minetrigger/textures/item/escudo.png" width="64">
 
 | 消費トリオン | 両手/片手 | クールダウン | 装備コスト |
 |---|---|---|---|
@@ -433,6 +469,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 
 ### バッグワーム
 
+<img src="../src/main/resources/assets/minetrigger/textures/item/bagworm.png" width="64">
+
 | 消費トリオン | クールダウン | 装備コスト |
 |---|---|---|
 | 2 / 秒（継続） | — | 3 |
@@ -447,6 +485,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 
 ### グラスホッパー
 
+<img src="../src/main/resources/assets/minetrigger/textures/item/grasshopper.png" width="64">
+
 | 消費トリオン | クールダウン | 装備コスト |
 |---|---|---|
 | 4 | 10 tick | 4 |
@@ -460,6 +500,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 ---
 
 ### スパイダー
+
+<img src="../src/main/resources/assets/minetrigger/textures/item/spider.png" width="64">
 
 | 消費トリオン | クールダウン | 装備コスト |
 |---|---|---|
@@ -477,6 +519,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 
 ### スイッチボックス
 
+<img src="../src/main/resources/assets/minetrigger/textures/item/switchbox.png" width="64">
+
 | 消費トリオン | クールダウン | 装備コスト |
 |---|---|---|
 | 3 | — | 5 |
@@ -492,6 +536,8 @@ WorldTrigger Mod — Weapon Specification v1.5
 ---
 
 ## 🧪 合成弾（コンポジットラウンド）
+
+<img src="../src/main/resources/assets/minetrigger/textures/item/composite_round.png" width="64">
 
 2種のトリガーを1発に合成した特殊弾。高度な合成技術を要する。
 
