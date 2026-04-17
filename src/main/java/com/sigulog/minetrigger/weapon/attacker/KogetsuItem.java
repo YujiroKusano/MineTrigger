@@ -5,6 +5,8 @@ import com.sigulog.minetrigger.config.WeaponParams;
 import com.sigulog.minetrigger.weapon.WeaponType;
 import com.sigulog.minetrigger.weapon.base.WeaponItem;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
@@ -36,6 +38,13 @@ public class KogetsuItem extends WeaponItem {
         // 旋空: 射程を2倍に延長した斬撃
         WeaponParams p = ModConfig.get().getWeaponParams(weaponType.configKey);
         slash(player, p.range * 2.0, (float) p.damage);
+    }
+
+    /** 特殊スキル: 抜刀強化 — 装備中に移動速度が上がる（Speed I） */
+    @Override
+    public void passiveEffect(ServerPlayerEntity player) {
+        player.addStatusEffect(new StatusEffectInstance(
+            StatusEffects.SPEED, 2, 0, false, false, true));
     }
 
     protected void slash(ServerPlayerEntity player, double range, float damage) {

@@ -4,6 +4,8 @@ import com.sigulog.minetrigger.config.ModConfig;
 import com.sigulog.minetrigger.config.WeaponParams;
 import com.sigulog.minetrigger.weapon.WeaponType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
@@ -37,6 +39,13 @@ public class ScorpionItem extends KogetsuItem {
         WeaponParams p = ModConfig.get().getWeaponParams(weaponType.configKey);
         slashAllAround(player, p.range, (float) p.damage);
         player.sendMessage(Text.literal("§6[ スコーピオン ]§r 全方位斬撃"), true);
+    }
+
+    /** 特殊スキル: 衝撃吸収 — 装備中に落下ダメージが発生しない（Slow Falling） */
+    @Override
+    public void passiveEffect(ServerPlayerEntity player) {
+        player.addStatusEffect(new StatusEffectInstance(
+            StatusEffects.SLOW_FALLING, 2, 0, false, false, true));
     }
 
     /** 周囲360°全員を攻撃する */

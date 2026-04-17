@@ -5,6 +5,8 @@ import com.sigulog.minetrigger.config.WeaponParams;
 import com.sigulog.minetrigger.core.BulletManager;
 import com.sigulog.minetrigger.weapon.WeaponType;
 import com.sigulog.minetrigger.weapon.base.ProjectileWeaponItem;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
@@ -22,6 +24,13 @@ public class IbisItem extends ProjectileWeaponItem {
         super(type, settings);
     }
 
+    /** 特殊スキル: 大型装備 — 装備中に移動速度が低下する（Slowness I。大型狙撃銃の重さを表現） */
+    @Override
+    public void passiveEffect(ServerPlayerEntity player) {
+        player.addStatusEffect(new StatusEffectInstance(
+            StatusEffects.SLOWNESS, 2, 0, false, false, true));
+    }
+
     @Override
     protected void activateNormal(ServerPlayerEntity player, Hand hand) {
         WeaponParams p = ModConfig.get().getWeaponParams(weaponType.configKey);
@@ -30,6 +39,7 @@ public class IbisItem extends ProjectileWeaponItem {
         BulletManager.fire(player, start, look,
             BulletManager.BulletOptions.builder(p.speed * 1.5, p.range, (float) (p.damage * 3.0))
                 .blockDestroy(1.5)
+                .gravity(0.001)
                 .build());
         player.sendMessage(Text.literal("§c[ アイビス ]§r 高威力弾"), true);
     }
@@ -43,6 +53,7 @@ public class IbisItem extends ProjectileWeaponItem {
             BulletManager.BulletOptions.builder(p.speed * 1.5, p.range, (float) (p.damage * 2.0))
                 .splash(p.splashRadius)
                 .blockDestroy(p.splashRadius)
+                .gravity(0.001)
                 .build());
         player.sendMessage(Text.literal("§4[ アイビス ]§r 爆破弾"), true);
     }

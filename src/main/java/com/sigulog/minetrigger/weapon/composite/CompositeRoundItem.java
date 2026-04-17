@@ -80,13 +80,13 @@ public class CompositeRoundItem extends WeaponItem {
     }
 
     // ──────────────────────────────────────────────────────────────
-    // Shift押下時はラジアルメニューに委ねる（トリオン消費なし）
+    // Shift+右クリック時はラジアルメニューに委ねる（トリオン消費なし）
     // ──────────────────────────────────────────────────────────────
 
     @Override
-    public boolean tryActivate(ServerPlayerEntity player, Hand hand) {
-        if (player.isSneaking()) return false; // ラジアルメニューが担当
-        return super.tryActivate(player, hand);
+    public boolean tryActivate(ServerPlayerEntity player, Hand hand, boolean special) {
+        if (special) return false; // ラジアルメニューが担当
+        return super.tryActivate(player, hand, false);
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -108,6 +108,7 @@ public class CompositeRoundItem extends WeaponItem {
                     BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage)
                         .homing(p.trackingSpeed)
                         .splash(p.splashRadius)
+                        .gravity(0.005)
                         .build());
                 player.sendMessage(Text.literal(mode.color + "[ " + mode.displayName + " ]§r 発射"), true);
             }
@@ -120,6 +121,7 @@ public class CompositeRoundItem extends WeaponItem {
                     BulletManager.fire(player, start, dir,
                         BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage)
                             .splash(p.splashRadius)
+                            .gravity(0.005)
                             .build());
                 }
                 player.sendMessage(Text.literal(mode.color + "[ " + mode.displayName + " ]§r 3方向発射"), true);
@@ -155,6 +157,7 @@ public class CompositeRoundItem extends WeaponItem {
                 BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage);
             if (homing) builder.homing(p.trackingSpeed);
             else        builder.splash(p.splashRadius);
+            builder.gravity(0.005);
             BulletManager.fire(player, start, dir, builder.build());
         }
     }

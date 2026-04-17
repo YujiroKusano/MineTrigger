@@ -102,11 +102,11 @@ public final class InputHandler {
 
     /**
      * 左クリック発動。Mixin の onHandSwing（空振り）からも呼ばれる。
-     * オフハンドに武器があれば発動、なければ何もしない。
+     * 左クリックは常に通常発動（特殊発動はShift+右クリック限定）。
      */
     public static ActionResult fireLeftClick(ServerPlayerEntity player) {
         if (player.getOffHandStack().getItem() instanceof WeaponItem offWeapon) {
-            offWeapon.tryActivate(player, Hand.OFF_HAND);
+            offWeapon.tryActivate(player, Hand.OFF_HAND, false);
         }
         return ActionResult.FAIL; // バニラ攻撃は常にキャンセル
     }
@@ -117,11 +117,12 @@ public final class InputHandler {
 
     /**
      * 右クリック発動。現在選択中のホットバースロット（メインハンド）の武器を使用する。
+     * Shiftを押しながらの右クリックは特殊発動になる。
      */
     public static void fireRightClick(ServerPlayerEntity player) {
         ItemStack stack = player.getMainHandStack();
         if (stack.getItem() instanceof WeaponItem weapon) {
-            weapon.tryActivate(player, Hand.MAIN_HAND);
+            weapon.tryActivate(player, Hand.MAIN_HAND, player.isSneaking());
         }
     }
 

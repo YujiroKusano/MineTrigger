@@ -4,6 +4,8 @@ import com.sigulog.minetrigger.config.ModConfig;
 import com.sigulog.minetrigger.config.WeaponParams;
 import com.sigulog.minetrigger.core.ShieldManager;
 import com.sigulog.minetrigger.weapon.WeaponType;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
@@ -44,6 +46,13 @@ public class RaygustItem extends KogetsuItem {
             WeaponParams p = ModConfig.get().getWeaponParams(weaponType.configKey);
             slash(player, p.range, (float) p.damage);
         }
+    }
+
+    /** 特殊スキル: 重装 — 装備中に移動速度が低下する（Slowness I。重い武器の重さを表現） */
+    @Override
+    public void passiveEffect(ServerPlayerEntity player) {
+        player.addStatusEffect(new StatusEffectInstance(
+            StatusEffects.SLOWNESS, 2, 0, false, false, true));
     }
 
     @Override

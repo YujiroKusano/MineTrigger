@@ -35,6 +35,7 @@ public class SpiderItem extends WeaponItem {
         BulletManager.fire(player, start, look,
             BulletManager.BulletOptions.builder(p.speed, p.wireLength, 0f)
                 .effect(StatusEffects.SLOWNESS, 60, 2)
+                .gravity(0.003)
                 .build());
         player.sendMessage(Text.literal("§8[ スパイダー ]§r ワイヤー射出"), true);
     }

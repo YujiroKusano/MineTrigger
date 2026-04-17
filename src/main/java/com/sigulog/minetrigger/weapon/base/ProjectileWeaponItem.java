@@ -26,6 +26,8 @@ public class ProjectileWeaponItem extends WeaponItem {
         Vec3d look  = player.getRotationVec(1.0f).normalize();
         // 目線から少し前方を発射起点にして自爆を防ぐ
         Vec3d start = player.getEyePos().add(look.multiply(0.5));
-        BulletManager.fire(player, start, look, p.speed, p.range, (float) p.damage);
+        BulletManager.fire(player, start, look,
+            BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage)
+                .gravity(0.004).build());
     }
 }

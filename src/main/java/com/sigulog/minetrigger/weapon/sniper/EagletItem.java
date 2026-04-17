@@ -28,7 +28,8 @@ public class EagletItem extends ProjectileWeaponItem {
         Vec3d look  = player.getRotationVec(1.0f).normalize();
         Vec3d start = player.getEyePos().add(look.multiply(0.5));
         BulletManager.fire(player, start, look,
-            BulletManager.BulletOptions.builder(p.speed * 2.0, p.range, (float) p.damage).build());
+            BulletManager.BulletOptions.builder(p.speed * 2.0, p.range, (float) p.damage)
+                .gravity(0.001).build());
         player.sendMessage(Text.literal("§b[ イーグレット ]§r 速射"), true);
     }
 
@@ -38,7 +39,8 @@ public class EagletItem extends ProjectileWeaponItem {
         Vec3d look  = player.getRotationVec(1.0f).normalize();
         Vec3d start = player.getEyePos().add(look.multiply(0.5));
         BulletManager.fire(player, start, look,
-            BulletManager.BulletOptions.builder(p.speed * 3.0, p.range, (float) (p.damage * 2.5)).build());
+            BulletManager.BulletOptions.builder(p.speed * 3.0, p.range, (float) (p.damage * 2.5))
+                .gravity(0.001).build());
         player.sendMessage(Text.literal("§3[ イーグレット ]§r チャージショット"), true);
     }
 }

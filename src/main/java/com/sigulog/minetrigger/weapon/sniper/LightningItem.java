@@ -33,7 +33,8 @@ public class LightningItem extends ProjectileWeaponItem {
         Vec3d look  = player.getRotationVec(1.0f).normalize();
         Vec3d start = player.getEyePos().add(look.multiply(0.5));
         BulletManager.fire(player, start, look,
-            BulletManager.BulletOptions.builder(p.speed * 4.0, p.range, (float) p.damage).build());
+            BulletManager.BulletOptions.builder(p.speed * 4.0, p.range, (float) p.damage)
+                .gravity(0.001).build());
         player.sendMessage(Text.literal("§e[ ライトニング ]§r 高速弾"), true);
     }
 
@@ -52,7 +53,8 @@ public class LightningItem extends ProjectileWeaponItem {
             Vec3d dir   = new Vec3d(dx, dy, dz).normalize();
             Vec3d start = eyePos.add(dir.multiply(0.5));
             BulletManager.fire(player, start, dir,
-                BulletManager.BulletOptions.builder(burstSpeed, p.range, (float) p.damage).build());
+                BulletManager.BulletOptions.builder(burstSpeed, p.range, (float) p.damage)
+                    .gravity(0.001).build());
         }
         player.sendMessage(Text.literal("§6[ ライトニング ]§r 連続高速弾"), true);
     }

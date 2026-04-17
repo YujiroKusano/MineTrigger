@@ -37,7 +37,8 @@ public class ShotgunItem extends ProjectileWeaponItem {
             Vec3d spread = randomSpread(look, 0.1);
             Vec3d start  = eyePos.add(spread.multiply(0.5));
             BulletManager.fire(player, start, spread,
-                BulletManager.BulletOptions.basic(p.speed, p.range, (float) p.damage));
+                BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage)
+                    .gravity(0.004).build());
         }
         player.sendMessage(Text.literal("§6[ ショットガン ]§r 散弾発射 ×" + p.pelletCount), true);
     }
@@ -54,7 +55,8 @@ public class ShotgunItem extends ProjectileWeaponItem {
             Vec3d spread = randomSpread(look, 0.03); // 拡散を小さく
             Vec3d start  = eyePos.add(spread.multiply(0.5));
             BulletManager.fire(player, start, spread,
-                BulletManager.BulletOptions.basic(p.speed * 1.2, p.closeRangeThreshold, bonusDamage));
+                BulletManager.BulletOptions.builder(p.speed * 1.2, p.closeRangeThreshold, bonusDamage)
+                    .gravity(0.004).build());
         }
         player.sendMessage(Text.literal("§e[ ショットガン ]§r 近距離集中射撃"), true);
     }

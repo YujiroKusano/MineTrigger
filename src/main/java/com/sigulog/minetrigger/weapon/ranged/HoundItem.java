@@ -5,9 +5,14 @@ import com.sigulog.minetrigger.config.WeaponParams;
 import com.sigulog.minetrigger.core.BulletManager;
 import com.sigulog.minetrigger.weapon.WeaponType;
 import com.sigulog.minetrigger.weapon.base.ProjectileWeaponItem;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 /**
@@ -22,6 +27,17 @@ public class HoundItem extends ProjectileWeaponItem {
         super(type, settings);
     }
 
+    /** 特殊スキル: 捕捉 — 20m以内の敵トリオン体を検知してGlowingを付与する */
+    @Override
+    public void passiveEffect(ServerPlayerEntity player) {
+        ServerWorld world = player.getServerWorld();
+        Box box = Box.of(player.getPos(), 40, 40, 40);
+        world.getEntitiesByClass(LivingEntity.class, box,
+            e -> e != player && !e.isSpectator() && e.distanceTo(player) <= 20f)
+            .forEach(e -> e.addStatusEffect(new StatusEffectInstance(
+                StatusEffects.GLOWING, 2, 0, false, false, false)));
+    }
+
     @Override
     protected void activateNormal(ServerPlayerEntity player, Hand hand) {
         WeaponParams p = ModConfig.get().getWeaponParams(weaponType.configKey);
@@ -30,6 +46,7 @@ public class HoundItem extends ProjectileWeaponItem {
         BulletManager.fire(player, start, look,
             BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage)
                 .homing(p.trackingSpeed)
+                .gravity(0.004)
                 .build());
         player.sendMessage(Text.literal("§b[ ハウンド ]§r ホーミング弾発射"), true);
     }
@@ -48,6 +65,7 @@ public class HoundItem extends ProjectileWeaponItem {
             BulletManager.fire(player, start, dir,
                 BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage)
                     .homing(p.trackingSpeed)
+                    .gravity(0.004)
                     .build());
         }
         player.sendMessage(Text.literal("§3[ ハウンド ]§r 3連ホーミング弾発射"), true);

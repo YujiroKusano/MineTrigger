@@ -4,6 +4,7 @@ import com.sigulog.minetrigger.config.ModConfig;
 import com.sigulog.minetrigger.core.BulletManager;
 import com.sigulog.minetrigger.core.CooldownManager;
 import com.sigulog.minetrigger.core.LoadoutManager;
+import com.sigulog.minetrigger.core.PassiveEffectSystem;
 import com.sigulog.minetrigger.core.ShieldManager;
 import com.sigulog.minetrigger.core.TriggerFrameManager;
 import com.sigulog.minetrigger.core.TrionSystem;
@@ -42,6 +43,7 @@ public class MineTriggerMod implements ModInitializer {
         CooldownManager.register();
         BulletManager.register();
         ShieldManager.register();
+        PassiveEffectSystem.register();
 
         // 6. 入力ルーティング登録
         InputHandler.register();

@@ -27,7 +27,9 @@ public class HandgunItem extends ProjectileWeaponItem {
         WeaponParams p = ModConfig.get().getWeaponParams(weaponType.configKey);
         Vec3d look  = player.getRotationVec(1.0f).normalize();
         Vec3d start = player.getEyePos().add(look.multiply(0.5));
-        BulletManager.fire(player, start, look, p.speed, p.range, (float) p.damage);
+        BulletManager.fire(player, start, look,
+            BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage)
+                .gravity(0.004).build());
         player.sendMessage(Text.literal("§e[ ハンドガン ]§r 発射"), true);
     }
 
@@ -42,7 +44,8 @@ public class HandgunItem extends ProjectileWeaponItem {
         for (int i = 0; i < 3; i++) {
             Vec3d start = eyePos.add(look.multiply(0.5));
             BulletManager.fire(player, start, look,
-                BulletManager.BulletOptions.builder(burstSpeed, p.range, burstDamage).build());
+                BulletManager.BulletOptions.builder(burstSpeed, p.range, burstDamage)
+                    .gravity(0.004).build());
         }
         player.sendMessage(Text.literal("§6[ ハンドガン ]§r 3連射"), true);
     }

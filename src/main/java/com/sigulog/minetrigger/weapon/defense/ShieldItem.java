@@ -27,13 +27,13 @@ public class ShieldItem extends WeaponItem {
 
     /** シールドはトリオン消費なし。クールダウンのみ管理する。 */
     @Override
-    public boolean tryActivate(ServerPlayerEntity player, Hand hand) {
+    public boolean tryActivate(ServerPlayerEntity player, Hand hand, boolean special) {
         if (CooldownManager.isOnCooldown(player, weaponType.configKey)) {
             player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 0.5f, 0.5f);
             return false;
         }
         WeaponParams p = ModConfig.get().getWeaponParams(weaponType.configKey);
-        if (player.isSneaking()) {
+        if (special) {
             activateSpecial(player, hand);
         } else {
             activateNormal(player, hand);

@@ -56,6 +56,11 @@ public final class BulletManager {
         public final boolean shieldPenetrating;
         /** ブロック破壊半径（0 = 破壊なし）。ベドロックは破壊しない。 */
         public final double blockDestroyRadius;
+        /**
+         * 重力加速度（ブロック/tick²）。毎tickY速度から引かれる。
+         * 0 = 完全直線。0.004 = 銃相当（ほぼ直線）、0.02 = グレネード相当（大きめの弧）。
+         */
+        public final double gravity;
 
         private BulletOptions(Builder b) {
             this.speed = b.speed;
@@ -68,6 +73,7 @@ public final class BulletManager {
             this.effectAmplifier = b.effectAmplifier;
             this.shieldPenetrating = b.shieldPenetrating;
             this.blockDestroyRadius = b.blockDestroyRadius;
+            this.gravity = b.gravity;
         }
 
         public static BulletOptions basic(double speed, double range, float damage) {
@@ -88,6 +94,7 @@ public final class BulletManager {
             private int effectAmplifier = 0;
             private boolean shieldPenetrating = false;
             private double blockDestroyRadius = 0;
+            private double gravity = 0.0;
 
             Builder(double speed, double range, float damage) {
                 this.speed = speed;
@@ -119,6 +126,11 @@ public final class BulletManager {
 
             public Builder blockDestroy(double radius) {
                 this.blockDestroyRadius = radius;
+                return this;
+            }
+
+            public Builder gravity(double g) {
+                this.gravity = g;
                 return this;
             }
 
@@ -194,6 +206,11 @@ public final class BulletManager {
                     ).normalize();
                     velocity = blended.multiply(speed);
                 }
+            }
+
+            // ── 重力適用 ──────────────────────────────────────────
+            if (opts.gravity > 0) {
+                velocity = velocity.add(0, -opts.gravity, 0);
             }
 
             Vec3d to = pos.add(velocity);

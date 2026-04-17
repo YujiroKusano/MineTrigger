@@ -89,10 +89,10 @@ public class AsteroidItem extends ProjectileWeaponItem {
     // ──────────────────────────────────────────────────────────────
 
     @Override
-    public boolean tryActivate(ServerPlayerEntity player, Hand hand) {
+    public boolean tryActivate(ServerPlayerEntity player, Hand hand, boolean special) {
         WeaponParams p = ModConfig.get().getWeaponParams(weaponType.configKey);
 
-        if (player.isSneaking()) {
+        if (special) {
             // ── 特殊技: 設置 ────────────────────────────────────────
             String placeKey = weaponType.configKey + "_place";
             if (CooldownManager.isOnCooldown(player, placeKey)) {
@@ -141,7 +141,8 @@ public class AsteroidItem extends ProjectileWeaponItem {
         WeaponParams p = ModConfig.get().getWeaponParams(weaponType.configKey);
         for (BulletNode node : nodes) {
             BulletManager.fire(player, node.position(), node.direction(),
-                p.speed, p.range, (float) p.damage);
+                BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage)
+                    .gravity(0.005).build());
         }
         player.sendMessage(Text.literal("§f[ アステロイド ]§r " + nodes.size() + "発一斉発射"), true);
     }

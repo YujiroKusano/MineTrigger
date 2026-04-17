@@ -48,20 +48,25 @@ public class WeaponItem extends Item {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getStackInHand(hand);
-
-        if (world.isClient) {
-            return TypedActionResult.fail(stack);
-        }
-
+        if (world.isClient) return TypedActionResult.fail(stack);
         ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
-        boolean fired = tryActivate(serverPlayer, hand);
+        boolean fired = tryActivate(serverPlayer, hand, serverPlayer.isSneaking());
         return fired ? TypedActionResult.success(stack) : TypedActionResult.fail(stack);
     }
 
     /**
-     * 指定の手の武器を発動する。成功すれば true を返す。
+     * 通常発動のショートカット（オプショントリガー枠・後方互換用）。
      */
     public boolean tryActivate(ServerPlayerEntity player, Hand hand) {
+        return tryActivate(player, hand, false);
+    }
+
+    /**
+     * 指定の手の武器を発動する。
+     *
+     * @param special true = 特殊発動（Shift＋右クリック）、false = 通常発動
+     */
+    public boolean tryActivate(ServerPlayerEntity player, Hand hand, boolean special) {
         // クールダウン確認
         if (CooldownManager.isOnCooldown(player, weaponType.configKey)) {
             player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BASS.value(), 0.5f, 0.5f);
@@ -77,8 +82,8 @@ public class WeaponItem extends Item {
             return false;
         }
 
-        // 特殊技 or 通常発動
-        if (player.isSneaking()) {
+        // 特殊発動 or 通常発動
+        if (special) {
             activateSpecial(player, hand);
         } else {
             activateNormal(player, hand);
@@ -92,21 +97,26 @@ public class WeaponItem extends Item {
     }
 
     /**
-     * 通常発動（左クリック相当）。
-     * Phase 2以降でオーバーライドして具体的な攻撃処理を実装する。
+     * 通常発動 — 持っている手のクリックで発動。
+     * 左手武器: 左クリック / 右手武器: 右クリック
      */
     protected void activateNormal(ServerPlayerEntity player, Hand hand) {
         MineTriggerMod.LOGGER.debug("[{}] 通常発動: {}", player.getName().getString(), weaponType);
-        // TODO Phase 2: 各武器の攻撃処理
     }
 
     /**
-     * 特殊技発動（シフト + 右クリック相当）。
-     * Phase 2以降でオーバーライド。
+     * 特殊発動 — Shift＋右クリックで発動（手に関わらず右クリック固定）。
      */
     protected void activateSpecial(ServerPlayerEntity player, Hand hand) {
-        MineTriggerMod.LOGGER.debug("[{}] 特殊技: {}", player.getName().getString(), weaponType);
-        // TODO Phase 2: 各武器の特殊技処理
+        MineTriggerMod.LOGGER.debug("[{}] 特殊発動: {}", player.getName().getString(), weaponType);
+    }
+
+    /**
+     * 特殊スキル（パッシブ） — どちらかの手に持っているだけで毎tick適用される。
+     * サブクラスでオーバーライドしてバフ/デバフを実装する。
+     */
+    public void passiveEffect(ServerPlayerEntity player) {
+        // デフォルト: 効果なし
     }
 
     // ──────────────────────────────────────────────────────────────

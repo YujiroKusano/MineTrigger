@@ -242,14 +242,16 @@ public final class ModConfig {
           handgun:
             trion_equip_cost: 4
             damage: 5
-            range: 20.0
+            range: 50.0
+            speed: 6.0
             cooldown_ticks: 12
             trion_use: 4
 
           assault_rifle:
             trion_equip_cost: 6
             damage: 5
-            range: 20.0
+            range: 100.0
+            speed: 6.0
             cooldown_ticks: 8
             trion_use: 5
 
@@ -259,14 +261,16 @@ public final class ModConfig {
             close_range_bonus: 1.5
             close_range_threshold: 5.0
             pellet_count: 6
-            range: 8.0
+            range: 20.0
+            speed: 5.0
             cooldown_ticks: 20
             trion_use: 6
 
           gatling:
             trion_equip_cost: 10
             damage: 6
-            range: 20.0
+            range: 80.0
+            speed: 6.0
             cooldown_ticks: 4
             trion_use: 10
 
@@ -275,14 +279,16 @@ public final class ModConfig {
             damage: 10
             splash_radius: 4.0
             slowness_duration_ticks: 60
-            range: 15.0
+            range: 50.0
+            speed: 4.0
             cooldown_ticks: 30
             trion_use: 9
 
           asteroid:
             trion_equip_cost: 6
             damage: 7
-            range: 20.0
+            range: 40.0
+            speed: 2.5
             cooldown_ticks: 15
             trion_use: 5
 
@@ -291,13 +297,15 @@ public final class ModConfig {
             damage: 9
             splash_radius: 3.0
             mine_trigger_radius: 2.0
+            speed: 2.5
             cooldown_ticks: 20
             trion_use: 8
 
           hound:
             trion_equip_cost: 6
             damage: 5
-            range: 20.0
+            range: 40.0
+            speed: 1.5
             tracking_speed: 0.3
             slowness_duration_ticks: 40
             cooldown_ticks: 15
@@ -308,6 +316,7 @@ public final class ModConfig {
             damage: 6
             max_nodes: 5
             node_duration_seconds: 8
+            speed: 2.5
             trion_use: 7
             trion_use_per_node: 1
             cooldown_ticks: 20
@@ -317,7 +326,7 @@ public final class ModConfig {
             damage: 0
             slowness_level: 3
             slowness_duration_ticks: 100
-            speed: 0.5
+            speed: 1.5
             shield_penetrate: true
             cooldown_ticks: 20
             trion_use: 8
@@ -325,7 +334,8 @@ public final class ModConfig {
           eaglet:
             trion_equip_cost: 8
             damage: 8
-            range: 80.0
+            range: 300.0
+            speed: 5.0
             cooldown_ticks: 40
             trion_use: 7
             trion_scaling: range
@@ -333,7 +343,7 @@ public final class ModConfig {
           lightning:
             trion_equip_cost: 7
             damage: 5
-            range: 60.0
+            range: 200.0
             speed: 5.0
             cooldown_ticks: 35
             trion_use: 6
@@ -342,7 +352,8 @@ public final class ModConfig {
           ibis:
             trion_equip_cost: 10
             damage: 15
-            range: 60.0
+            range: 400.0
+            speed: 4.0
             shield_penetrate_rate: 0.5
             cooldown_ticks: 50
             trion_use: 9
@@ -389,7 +400,7 @@ public final class ModConfig {
             trion_equip_cost: 12
             damage: 7
             range: 20.0
-            speed: 1.0
+            speed: 2.5
             splash_radius: 3.0
             tracking_speed: 0.3
             cooldown_ticks: 20

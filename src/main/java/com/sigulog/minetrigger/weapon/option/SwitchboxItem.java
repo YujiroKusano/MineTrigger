@@ -33,6 +33,7 @@ public class SwitchboxItem extends WeaponItem {
         BulletManager.fire(player, start, look,
             BulletManager.BulletOptions.builder(p.speed * 0.3, p.range, (float) p.damage)
                 .splash(p.splashRadius)
+                .gravity(0.015)
                 .build());
         player.sendMessage(Text.literal("§c[ スイッチボックス ]§r 爆発弾設置"), true);
     }

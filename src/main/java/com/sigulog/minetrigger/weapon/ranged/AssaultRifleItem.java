@@ -32,7 +32,9 @@ public class AssaultRifleItem extends ProjectileWeaponItem {
         WeaponParams p = ModConfig.get().getWeaponParams(weaponType.configKey);
         Vec3d look  = player.getRotationVec(1.0f).normalize();
         Vec3d start = player.getEyePos().add(look.multiply(0.5));
-        BulletManager.fire(player, start, look, p.speed, p.range, (float) p.damage);
+        BulletManager.fire(player, start, look,
+            BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage)
+                .gravity(0.004).build());
         player.sendMessage(Text.literal("§a[ アサルトライフル ]§r 発射"), true);
     }
 
@@ -51,7 +53,8 @@ public class AssaultRifleItem extends ProjectileWeaponItem {
             Vec3d dir   = new Vec3d(dx, dy, dz).normalize();
             Vec3d start = eyePos.add(dir.multiply(0.5));
             BulletManager.fire(player, start, dir,
-                BulletManager.BulletOptions.builder(burstSpeed, p.range, burstDamage).build());
+                BulletManager.BulletOptions.builder(burstSpeed, p.range, burstDamage)
+                    .gravity(0.004).build());
         }
         player.sendMessage(Text.literal("§2[ アサルトライフル ]§r フルバースト"), true);
     }

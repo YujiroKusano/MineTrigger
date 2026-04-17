@@ -5,6 +5,8 @@ import com.sigulog.minetrigger.config.WeaponParams;
 import com.sigulog.minetrigger.core.BulletManager;
 import com.sigulog.minetrigger.weapon.WeaponType;
 import com.sigulog.minetrigger.weapon.base.ProjectileWeaponItem;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
@@ -27,12 +29,21 @@ public class GatlingItem extends ProjectileWeaponItem {
         super(type, settings);
     }
 
+    /** 特殊スキル: 重火器 — 装備中に移動速度が大幅低下（Slowness II。機関砲の重さを表現） */
+    @Override
+    public void passiveEffect(ServerPlayerEntity player) {
+        player.addStatusEffect(new StatusEffectInstance(
+            StatusEffects.SLOWNESS, 2, 1, false, false, true));
+    }
+
     @Override
     protected void activateNormal(ServerPlayerEntity player, Hand hand) {
         WeaponParams p = ModConfig.get().getWeaponParams(weaponType.configKey);
         Vec3d look  = player.getRotationVec(1.0f).normalize();
         Vec3d start = player.getEyePos().add(look.multiply(0.5));
-        BulletManager.fire(player, start, look, p.speed, p.range, (float) p.damage);
+        BulletManager.fire(player, start, look,
+            BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage)
+                .gravity(0.004).build());
         player.sendMessage(Text.literal("§6[ ガトリング ]§r 発射"), true);
     }
 
@@ -51,7 +62,8 @@ public class GatlingItem extends ProjectileWeaponItem {
             Vec3d dir   = new Vec3d(dx, dy, dz).normalize();
             Vec3d start = eyePos.add(dir.multiply(0.5));
             BulletManager.fire(player, start, dir,
-                BulletManager.BulletOptions.builder(burstSpeed, p.range, burstDamage).build());
+                BulletManager.BulletOptions.builder(burstSpeed, p.range, burstDamage)
+                    .gravity(0.004).build());
         }
         player.sendMessage(Text.literal("§c[ ガトリング ]§r 高速連射×8"), true);
     }

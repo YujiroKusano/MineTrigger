@@ -27,7 +27,9 @@ public class ViperItem extends ProjectileWeaponItem {
         WeaponParams p = ModConfig.get().getWeaponParams(weaponType.configKey);
         Vec3d look  = player.getRotationVec(1.0f).normalize();
         Vec3d start = player.getEyePos().add(look.multiply(0.5));
-        BulletManager.fire(player, start, look, p.speed, p.range, (float) p.damage);
+        BulletManager.fire(player, start, look,
+            BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage)
+                .gravity(0.005).build());
         player.sendMessage(Text.literal("§5[ バイパー ]§r 発射"), true);
     }
 
@@ -43,7 +45,8 @@ public class ViperItem extends ProjectileWeaponItem {
             Vec3d dir   = new Vec3d(look.x + off, look.y, look.z).normalize();
             Vec3d start = eyePos.add(dir.multiply(0.5));
             BulletManager.fire(player, start, dir,
-                BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage).build());
+                BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage)
+                    .gravity(0.005).build());
         }
         player.sendMessage(Text.literal("§d[ バイパー ]§r ジグザグ弾"), true);
     }
