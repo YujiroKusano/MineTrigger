@@ -1,6 +1,7 @@
 package com.sigulog.minetrigger;
 
 import com.sigulog.minetrigger.config.ModConfig;
+import com.sigulog.minetrigger.core.BlockInteractionSystem;
 import com.sigulog.minetrigger.core.BulletManager;
 import com.sigulog.minetrigger.core.CooldownManager;
 import com.sigulog.minetrigger.core.LoadoutManager;
@@ -44,6 +45,7 @@ public class MineTriggerMod implements ModInitializer {
         BulletManager.register();
         ShieldManager.register();
         PassiveEffectSystem.register();
+        BlockInteractionSystem.register();
 
         // 6. 入力ルーティング登録
         InputHandler.register();
