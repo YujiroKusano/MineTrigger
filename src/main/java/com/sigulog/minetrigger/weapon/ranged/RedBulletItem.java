@@ -34,6 +34,7 @@ public class RedBulletItem extends ProjectileWeaponItem {
             BulletManager.BulletOptions.builder(p.speed, p.range, 0f)
                 .effect(StatusEffects.SLOWNESS, p.slownessDurationTicks, p.slownessLevel - 1)
                 .shieldPenetrating()
+                .stickArrow()
                 .gravity(0.003)
                 .build());
         player.sendMessage(Text.literal("§4[ レッドバレット ]§r スロウネス弾発射"), true);
@@ -50,6 +51,7 @@ public class RedBulletItem extends ProjectileWeaponItem {
                 .splash(3.0)
                 .effect(StatusEffects.SLOWNESS, p.slownessDurationTicks, p.slownessLevel - 1)
                 .shieldPenetrating()
+                .stickArrow()
                 .gravity(0.003)
                 .build());
         player.sendMessage(Text.literal("§c[ レッドバレット ]§r 範囲スロウネス弾発射"), true);

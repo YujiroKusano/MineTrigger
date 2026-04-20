@@ -3,6 +3,7 @@ package com.sigulog.minetrigger.weapon.ranged;
 import com.sigulog.minetrigger.config.ModConfig;
 import com.sigulog.minetrigger.config.WeaponParams;
 import com.sigulog.minetrigger.core.BulletManager;
+import com.sigulog.minetrigger.core.GunnerAmmoManager;
 import com.sigulog.minetrigger.weapon.WeaponType;
 import com.sigulog.minetrigger.weapon.base.ProjectileWeaponItem;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -24,6 +25,10 @@ public class HandgunItem extends ProjectileWeaponItem {
 
     @Override
     protected void activateNormal(ServerPlayerEntity player, Hand hand) {
+        // 弾薬モードチェック: 設定された弾薬で発射 → 次のモードへ
+        if (GunnerAmmoManager.fireAndCycle(player, hand, weaponType) != null) return;
+
+        // 通常弾
         WeaponParams p = ModConfig.get().getWeaponParams(weaponType.configKey);
         Vec3d look  = player.getRotationVec(1.0f).normalize();
         Vec3d start = player.getEyePos().add(look.multiply(0.5));

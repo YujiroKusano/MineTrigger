@@ -65,7 +65,8 @@ public final class LoadoutManager {
             totalCost += params.trionEquipCost;
         }
 
-        float newMax = cfg.baseTrion - totalCost;
+        // 装備コストは発動ごとの消費のみ。最大トリオンは base_trion 固定（500）。
+        float newMax = cfg.baseTrion;
         TrionSystem.updateMaxTrion(player, newMax);
     }
 

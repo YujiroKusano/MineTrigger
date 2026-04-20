@@ -4,6 +4,7 @@ import com.sigulog.minetrigger.config.ModConfig;
 import com.sigulog.minetrigger.core.BlockInteractionSystem;
 import com.sigulog.minetrigger.core.BulletManager;
 import com.sigulog.minetrigger.core.CooldownManager;
+import com.sigulog.minetrigger.core.GunnerAmmoManager;
 import com.sigulog.minetrigger.core.LoadoutManager;
 import com.sigulog.minetrigger.core.PassiveEffectSystem;
 import com.sigulog.minetrigger.core.ShieldManager;
@@ -56,6 +57,9 @@ public class MineTriggerMod implements ModInitializer {
 
         // 8. トリガー枠管理登録
         TriggerFrameManager.register();
+
+        // 8b. ガンナー弾薬管理登録
+        GunnerAmmoManager.register();
 
         // 9. コマンド登録
         TrionCommand.register();

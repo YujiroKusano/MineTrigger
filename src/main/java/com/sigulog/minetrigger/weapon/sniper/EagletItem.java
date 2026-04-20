@@ -3,6 +3,7 @@ package com.sigulog.minetrigger.weapon.sniper;
 import com.sigulog.minetrigger.config.ModConfig;
 import com.sigulog.minetrigger.config.WeaponParams;
 import com.sigulog.minetrigger.core.BulletManager;
+import com.sigulog.minetrigger.core.GunnerAmmoManager;
 import com.sigulog.minetrigger.weapon.WeaponType;
 import com.sigulog.minetrigger.weapon.base.ProjectileWeaponItem;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -24,6 +25,8 @@ public class EagletItem extends ProjectileWeaponItem {
 
     @Override
     protected void activateNormal(ServerPlayerEntity player, Hand hand) {
+        if (GunnerAmmoManager.fireAndCycle(player, hand, weaponType) != null) return;
+
         WeaponParams p = ModConfig.get().getWeaponParams(weaponType.configKey);
         Vec3d look  = player.getRotationVec(1.0f).normalize();
         Vec3d start = player.getEyePos().add(look.multiply(0.5));

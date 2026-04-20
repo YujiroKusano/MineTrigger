@@ -1,14 +1,21 @@
 package com.sigulog.minetrigger.client.hud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.sigulog.minetrigger.ModItems;
 import com.sigulog.minetrigger.client.MineTriggerClient;
 import com.sigulog.minetrigger.client.ScopeHandler;
+import com.sigulog.minetrigger.weapon.WeaponType;
+import com.sigulog.minetrigger.weapon.base.WeaponItem;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import org.joml.Matrix4f;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * クライアントサイドの HUD。
@@ -40,18 +47,18 @@ public final class TrionHud {
         java.util.Arrays.fill(triggerFrameKeys, "");
     }
 
-    // スロットのサイズ・配置定数
-    private static final int CELL      = 32;   // 外枠一辺
-    private static final int CORNER    = 6;    // 八角形の角カット幅
+    // スロットのサイズ・配置定数（コンパクトサイズに変更）
+    private static final int CELL      = 22;   // 外枠一辺（縮小）
+    private static final int CORNER    = 4;    // 八角形の角カット幅
     private static final int BORDER    = 2;    // 枠線の太さ
-    private static final int COL_GAP   = 5;    // 列間隔
-    private static final int ROW_GAP   = 5;    // 行間隔
-    private static final int COLS      = 3;
-    private static final int ROWS      = 2;
+    private static final int COL_GAP   = 3;    // 列間隔
+    private static final int ROW_GAP   = 3;    // 行間隔
+    private static final int COLS      = 5;
+    private static final int ROWS      = 1;
 
     // 画面左下からのオフセット
-    private static final int PANEL_LEFT   = 8;
-    private static final int PANEL_BOTTOM = 50;   // 画面下端からの距離
+    private static final int PANEL_LEFT   = 6;
+    private static final int PANEL_BOTTOM = 45;   // 画面下端からの距離
 
     // 色
     private static final int C_BG_EMPTY    = 0xCC111111;
@@ -75,6 +82,7 @@ public final class TrionHud {
 
             renderTrionBar(ctx, client, MARGIN_X, sh - MARGIN_BOTTOM);
             renderTriggerPanel(ctx, client, sh);
+            renderAmmoMode(ctx, client, MARGIN_X, sh - MARGIN_BOTTOM - 22);
             if (ScopeHandler.showOverlay()) renderScopeOverlay(ctx, sw, sh);
         });
     }
@@ -100,6 +108,38 @@ public final class TrionHud {
         ctx.drawText(client.textRenderer,
             Text.literal(String.format("TRION  %d / %d", (int) currentTrion, (int) maxTrion)),
             x, y - 10, 0xFFFFFFFF, true);
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // 弾薬モードインジケーター（メインハンドの銃種別）
+    // ──────────────────────────────────────────────────────────────
+
+    private static void renderAmmoMode(DrawContext ctx, MinecraftClient client, int x, int y) {
+        if (client.player == null) return;
+
+        // メインハンドまたはオフハンドの銃を確認
+        WeaponType wt = null;
+        var main = client.player.getMainHandStack();
+        var off  = client.player.getOffHandStack();
+        if (main.getItem() instanceof WeaponItem wi && (wi.getWeaponType().isGunnerGun() || wi.getWeaponType().isSniper()))
+            wt = wi.getWeaponType();
+        else if (off.getItem() instanceof WeaponItem wi && (wi.getWeaponType().isGunnerGun() || wi.getWeaponType().isSniper()))
+            wt = wi.getWeaponType();
+
+        if (wt == null) return;
+
+        String[] ammos = getGunAmmos(wt.configKey);
+        int mode = getGunMode(wt.configKey);
+        String a0 = ammos.length > 0 ? ammos[0] : "";
+        String a1 = ammos.length > 1 ? ammos[1] : "";
+        String prefix = wt.isSniper() ? "S" : "G";
+
+        String label = switch (mode) {
+            case 1 -> prefix + ": §a" + (a0.isEmpty() ? "?" : a0);
+            case 2 -> prefix + ": §a" + (a1.isEmpty() ? "?" : a1);
+            default -> prefix + ": §7通常弾";
+        };
+        ctx.drawText(client.textRenderer, Text.literal(label), x, y, 0xFFFFFFFF, true);
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -149,13 +189,18 @@ public final class TrionHud {
             Text.literal(String.valueOf(index + 1)),
             ox + 3, oy + 3, C_KEY_LABEL, true);
 
-        // ─── 武器名 or ダッシュ ───
+        // ─── アイテムアイコン or ダッシュ ───
         if (isSet) {
-            // 枠の中央に短縮表示
-            String display = key.length() > 7 ? key.substring(0, 6) + "." : key;
-            int tx = ox + (r - client.textRenderer.getWidth(display)) / 2;
-            int ty = oy + r / 2 + 2;
-            ctx.drawText(client.textRenderer, Text.literal(display), tx, ty, C_WEAPON_NAME, true);
+            // アイテムアイコンを描画
+            WeaponType wt = WeaponType.fromConfigKey(key);
+            if (wt != null) {
+                var item = ModItems.get(wt);
+                if (item != null) {
+                    int iconX = ox + (r - 16) / 2;
+                    int iconY = oy + (r - 16) / 2;
+                    ctx.drawItem(new ItemStack(item), iconX, iconY);
+                }
+            }
         } else {
             ctx.drawText(client.textRenderer,
                 Text.literal("--"),
@@ -184,6 +229,13 @@ public final class TrionHud {
     }
 
     // ──────────────────────────────────────────────────────────────
+    // 弾薬キャッシュ（銃種 configKey → ammo配列・モード）
+    // ──────────────────────────────────────────────────────────────
+
+    private static final Map<String, String[]> gunAmmoCache = new ConcurrentHashMap<>();
+    private static final Map<String, Integer>  gunModeCache = new ConcurrentHashMap<>();
+
+    // ──────────────────────────────────────────────────────────────
     // 同期受信
     // ──────────────────────────────────────────────────────────────
 
@@ -196,6 +248,25 @@ public final class TrionHud {
         if (index >= 0 && index < triggerFrameKeys.length) {
             triggerFrameKeys[index] = weaponKey != null ? weaponKey : "";
         }
+    }
+
+    /** S2C GunAmmoUpdatePayload 受信時に呼ぶ */
+    public static void updateGunAmmo(String gunKey, String a0, String a1, int mode) {
+        gunAmmoCache.put(gunKey, new String[]{
+            a0 != null ? a0 : "",
+            a1 != null ? a1 : ""
+        });
+        gunModeCache.put(gunKey, mode);
+    }
+
+    /** インベントリ画面から現在アモ配列を取得する */
+    public static String[] getGunAmmos(String gunKey) {
+        return gunAmmoCache.getOrDefault(gunKey, new String[]{"", ""});
+    }
+
+    /** インベントリ画面から現在モードを取得する */
+    public static int getGunMode(String gunKey) {
+        return gunModeCache.getOrDefault(gunKey, 0);
     }
 
     /** インベントリ画面から参照するためのスナップショット */

@@ -11,12 +11,15 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 
 /**
- * バイパー — 軌道を制御できる変則弾トリガー。
+ * バイパー — 極低速で操舵可能なトリオン弾。
  *
- * 通常発動: 基本射撃1発
- * 特殊技  : ジグザグ弾（3発を左右±0.2にずらして発射）
+ * 通常発動: 低速弾1発。長押し中は向いた方向へ曲がる。
+ * 特殊技  : 3発同時発射（それぞれ操舵可）
  */
 public class ViperItem extends ProjectileWeaponItem {
+
+    /** バイパー弾の速度（通常弾の約1/8） */
+    private static final double VIPER_SPEED = 0.12;
 
     public ViperItem(WeaponType type, Settings settings) {
         super(type, settings);
@@ -28,9 +31,10 @@ public class ViperItem extends ProjectileWeaponItem {
         Vec3d look  = player.getRotationVec(1.0f).normalize();
         Vec3d start = player.getEyePos().add(look.multiply(0.5));
         BulletManager.fire(player, start, look,
-            BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage)
-                .gravity(0.005).build());
-        player.sendMessage(Text.literal("§5[ バイパー ]§r 発射"), true);
+            BulletManager.BulletOptions.builder(VIPER_SPEED, p.range, (float) p.damage)
+                .viperSteering()
+                .build());
+        player.sendMessage(Text.literal("§5[ バイパー ]§r 操舵弾発射"), true);
     }
 
     @Override
@@ -39,15 +43,16 @@ public class ViperItem extends ProjectileWeaponItem {
         Vec3d look   = player.getRotationVec(1.0f).normalize();
         Vec3d eyePos = player.getEyePos();
 
-        // 水平左右オフセット ±0.2 の3発
-        double[] horizontalOffsets = { -0.2, 0.0, 0.2 };
-        for (double off : horizontalOffsets) {
-            Vec3d dir   = new Vec3d(look.x + off, look.y, look.z).normalize();
+        // 縦方向に3発展開
+        double[] offsets = { -0.08, 0.0, 0.08 };
+        for (double off : offsets) {
+            Vec3d dir   = new Vec3d(look.x, look.y + off, look.z).normalize();
             Vec3d start = eyePos.add(dir.multiply(0.5));
             BulletManager.fire(player, start, dir,
-                BulletManager.BulletOptions.builder(p.speed, p.range, (float) p.damage)
-                    .gravity(0.005).build());
+                BulletManager.BulletOptions.builder(VIPER_SPEED, p.range, (float) p.damage)
+                    .viperSteering()
+                    .build());
         }
-        player.sendMessage(Text.literal("§d[ バイパー ]§r ジグザグ弾"), true);
+        player.sendMessage(Text.literal("§d[ バイパー ]§r 3連操舵弾発射"), true);
     }
 }

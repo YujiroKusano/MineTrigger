@@ -2,9 +2,12 @@ package com.sigulog.minetrigger.core;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -61,6 +64,10 @@ public final class BulletManager {
          * 0 = 完全直線。0.004 = 銃相当（ほぼ直線）、0.02 = グレネード相当（大きめの弧）。
          */
         public final double gravity;
+        /** バイパー操舵: プレイヤーの視点方向へ毎tick誘導する。 */
+        public final boolean viperSteering;
+        /** 命中時に矢を刺す（レッドバレット用の視覚表現）。 */
+        public final boolean stickArrow;
 
         private BulletOptions(Builder b) {
             this.speed = b.speed;
@@ -74,6 +81,8 @@ public final class BulletManager {
             this.shieldPenetrating = b.shieldPenetrating;
             this.blockDestroyRadius = b.blockDestroyRadius;
             this.gravity = b.gravity;
+            this.viperSteering = b.viperSteering;
+            this.stickArrow = b.stickArrow;
         }
 
         public static BulletOptions basic(double speed, double range, float damage) {
@@ -95,6 +104,8 @@ public final class BulletManager {
             private boolean shieldPenetrating = false;
             private double blockDestroyRadius = 0;
             private double gravity = 0.0;
+            private boolean viperSteering = false;
+            private boolean stickArrow = false;
 
             Builder(double speed, double range, float damage) {
                 this.speed = speed;
@@ -131,6 +142,16 @@ public final class BulletManager {
 
             public Builder gravity(double g) {
                 this.gravity = g;
+                return this;
+            }
+
+            public Builder viperSteering() {
+                this.viperSteering = true;
+                return this;
+            }
+
+            public Builder stickArrow() {
+                this.stickArrow = true;
                 return this;
             }
 
@@ -208,6 +229,20 @@ public final class BulletManager {
                 }
             }
 
+            // ── バイパー操舵（プレイヤーの視点方向へ誘導） ──────────
+            if (opts.viperSteering && !shooter.isRemoved()) {
+                Vec3d look = shooter.getRotationVec(1.0f).normalize();
+                double speed = velocity.length();
+                Vec3d curDir = velocity.normalize();
+                double steerStr = 0.15;
+                Vec3d newDir = new Vec3d(
+                    curDir.x + (look.x - curDir.x) * steerStr,
+                    curDir.y + (look.y - curDir.y) * steerStr,
+                    curDir.z + (look.z - curDir.z) * steerStr
+                ).normalize();
+                velocity = newDir.multiply(speed);
+            }
+
             // ── 重力適用 ──────────────────────────────────────────
             if (opts.gravity > 0) {
                 velocity = velocity.add(0, -opts.gravity, 0);
@@ -273,6 +308,28 @@ public final class BulletManager {
             if (opts.applyEffect != null) {
                 target.addStatusEffect(new StatusEffectInstance(
                     opts.applyEffect, opts.effectDuration, opts.effectAmplifier));
+            }
+            if (opts.stickArrow) {
+                spawnStuckArrow(world, target);
+            }
+        }
+
+        /** レッドバレット命中時: 矢が刺さったように見せるArrow Entityを生成する */
+        private void spawnStuckArrow(ServerWorld world, LivingEntity target) {
+            try {
+                ArrowEntity arrow = new ArrowEntity(EntityType.ARROW, world);
+                arrow.setPos(target.getX(),
+                             target.getY() + target.getHeight() * 0.5,
+                             target.getZ());
+                // ほぼ静止・無重力で刺さったように見せる
+                arrow.setVelocity(0.0, -0.001, 0.0);
+                arrow.setNoGravity(true);
+                arrow.pickupType = PersistentProjectileEntity.PickupPermission.DISALLOWED;
+                arrow.setDamage(0.0);
+                arrow.setOwner(shooter);
+                world.spawnEntity(arrow);
+            } catch (Exception ignored) {
+                // ArrowEntity生成に失敗しても致命的ではない
             }
         }
 

@@ -2,6 +2,7 @@ package com.sigulog.minetrigger.client;
 
 import com.sigulog.minetrigger.MineTriggerMod;
 import com.sigulog.minetrigger.MineTriggerNetwork;
+import com.sigulog.minetrigger.client.hud.MinimapHud;
 import com.sigulog.minetrigger.client.hud.RadialMenuHud;
 import com.sigulog.minetrigger.client.hud.TrionHud;
 import com.sigulog.minetrigger.weapon.WeaponType;
@@ -25,7 +26,7 @@ import org.lwjgl.glfw.GLFW;
  */
 public class MineTriggerClient implements ClientModInitializer {
 
-    public static final int TRIGGER_SLOT_COUNT = 6;
+    public static final int TRIGGER_SLOT_COUNT = 5;
 
     private static final int[] GL_KEYS = {
         GLFW.GLFW_KEY_1, GLFW.GLFW_KEY_2, GLFW.GLFW_KEY_3,
@@ -34,6 +35,10 @@ public class MineTriggerClient implements ClientModInitializer {
 
     /** 前tick のキー押下状態（エッジ検出用） */
     private static final boolean[] prevDown = new boolean[TRIGGER_SLOT_COUNT];
+
+    // ── アモサイクル順序 ──────────────────────────────────────────
+    private static final String[] GUNNER_AMMO_CYCLE = {"", "asteroid", "meteora", "viper", "hound"};
+    private static final String[] SNIPER_AMMO_CYCLE = {"", "red_bullet"};
 
     // ── 合成弾ラジアルメニュー用 ──────────────────────────────────
     /** Shift+RMB の連続ホールド tick 数 */
@@ -62,6 +67,12 @@ public class MineTriggerClient implements ClientModInitializer {
                     TrionHud.updateTriggerFrame(i, payload.slot(i));
                 }
             }
+        );
+
+        ClientPlayNetworking.registerGlobalReceiver(
+            MineTriggerNetwork.GunAmmoUpdatePayload.ID,
+            (payload, context) -> TrionHud.updateGunAmmo(
+                payload.gunKey(), payload.ammo0(), payload.ammo1(), payload.mode())
         );
 
         // ── ホットバー切り替えを根本から抑制（数字キー1〜TRIGGER_SLOT_COUNT） ──
@@ -118,25 +129,53 @@ public class MineTriggerClient implements ClientModInitializer {
             }
 
             // ── スコープ（ADS）処理 ──────────────────────────────────
-            // 銃系武器をメインに持ち、左手が空のとき LMB ホールドでスコープ
-            boolean lmbDown = GLFW.glfwGetMouseButton(window, GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
-            boolean canScope = false;
+            // RMB ホールドでスコープ（スナイパー系のみ）。
+            // LMB はスコープに使わず、発射専用とする。
             boolean isSniperScope = false;
+            boolean canScope = false;
             if (!RadialMenuHud.isOpen()) {
                 var mainStack = client.player.getMainHandStack();
                 var offStack  = client.player.getOffHandStack();
-                if (mainStack.getItem() instanceof WeaponItem wi && wi.getWeaponType().isGun()
+                if (mainStack.getItem() instanceof WeaponItem wi && wi.getWeaponType().isSniper()
                         && offStack.isEmpty()) {
-                    canScope     = true;
-                    isSniperScope = wi.getWeaponType().isSniper();
+                    canScope      = true;
+                    isSniperScope = true;
                 }
             }
-            if (canScope && lmbDown) {
+            if (canScope && rmbDown) {
                 ScopeHandler.activate(isSniperScope);
             } else {
                 ScopeHandler.deactivate();
             }
             ScopeHandler.tick();
+
+            // ── Shift+LMB でアモサイクル（銃を構えたまま弾種変更） ──
+            boolean lmbDown = GLFW.glfwGetMouseButton(window, GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
+            if (shiftDown && lmbDown && !prevLmbDown) {
+                var mainStack = client.player.getMainHandStack();
+                if (mainStack.getItem() instanceof WeaponItem wi) {
+                    WeaponType wt = wi.getWeaponType();
+                    if (wt.isGunnerGun() || wt.isSniper()) {
+                        String[] cycle = wt.isSniper()
+                            ? SNIPER_AMMO_CYCLE
+                            : GUNNER_AMMO_CYCLE;
+                        String[] ammos = TrionHud.getGunAmmos(wt.configKey);
+                        // スロット 0 の弾種をサイクル
+                        String current = ammos.length > 0 ? ammos[0] : "";
+                        String next = cycle[0];
+                        for (int j = 0; j < cycle.length; j++) {
+                            if (cycle[j].equals(current)) {
+                                next = cycle[(j + 1) % cycle.length];
+                                break;
+                            }
+                        }
+                        if (ClientPlayNetworking.canSend(MineTriggerNetwork.SetGunAmmoPayload.ID)) {
+                            ClientPlayNetworking.send(
+                                new MineTriggerNetwork.SetGunAmmoPayload(wt.configKey, 0, next));
+                        }
+                    }
+                }
+            }
             prevLmbDown = lmbDown;
 
             // ── 数字キー（オプショントリガー発動） ──────────────────
@@ -155,6 +194,7 @@ public class MineTriggerClient implements ClientModInitializer {
         // ── HUD登録 ──────────────────────────────────────────────────
         TrionHud.register();
         RadialMenuHud.register();
+        MinimapHud.register();
 
         MineTriggerMod.LOGGER.info("[MineTrigger] Client ready.");
     }

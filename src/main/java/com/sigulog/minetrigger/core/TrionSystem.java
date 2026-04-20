@@ -5,6 +5,7 @@ import com.sigulog.minetrigger.MineTriggerNetwork;
 import com.sigulog.minetrigger.TrionDataAttachments;
 import com.sigulog.minetrigger.config.ModConfig;
 import com.sigulog.minetrigger.core.ShieldManager;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -57,6 +58,9 @@ public final class TrionSystem {
         // ── 1. バニラダメージをトリオンダメージに置き換え ──────────────
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
             if (entity instanceof ServerPlayerEntity player) {
+                // 落下ダメージは完全無効化
+                if (source.isIn(DamageTypeTags.IS_FALL)) return false;
+
                 // ベイルアウト中（player.kill() によるダメージなど）はバニラに委ねる
                 if (bailingOut.contains(player.getUuid())) {
                     return true;
@@ -251,6 +255,13 @@ public final class TrionSystem {
         // バニラ体力が下がっていたら（他のダメージソースなど）満タンに戻す
         if (player.getHealth() < player.getMaxHealth()) {
             player.setHealth(player.getMaxHealth());
+        }
+
+        // 食料レベルを常に満タンに保つ（空腹ダメージ・低下を無効化）
+        var hunger = player.getHungerManager();
+        if (hunger.getFoodLevel() < 20) {
+            hunger.setFoodLevel(20);
+            hunger.setSaturationLevel(20.0f);
         }
 
         // ── トリオン自動回復（1秒 = 20tick ごとに適用） ──────────────

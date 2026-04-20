@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class TriggerFrameManager {
 
-    public static final int SLOT_COUNT = 6;
+    public static final int SLOT_COUNT = 5;
 
     private static final Map<UUID, OptionTriggerInventory> inventories = new ConcurrentHashMap<>();
 
@@ -104,7 +104,8 @@ public final class TriggerFrameManager {
         ItemStack stack = inv.getStack(slot);
         if (stack.isEmpty()) return false;
         if (!(stack.getItem() instanceof WeaponItem weapon)) return false;
-        return weapon.tryActivate(player, Hand.MAIN_HAND);
+        // Shift+数字キーで特殊発動
+        return weapon.tryActivate(player, Hand.MAIN_HAND, player.isSneaking());
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -181,7 +182,7 @@ public final class TriggerFrameManager {
                 String id = lines.get(i).trim();
                 if (id.isEmpty()) continue;
                 Item item = Registries.ITEM.get(Identifier.of(id));
-                if (item != null && item instanceof WeaponItem wi && wi.getWeaponType().isOption()) {
+                if (item != null && item instanceof WeaponItem) {
                     inv.setStack(i, new ItemStack(item));
                 }
             }

@@ -58,13 +58,30 @@ public enum WeaponType {
         };
     }
 
-    /** isGun: スコープ対応の銃系武器かどうか */
-    public boolean isGun() {
+    /** isGunnerGun: ガンナー系銃（弾薬設定対象）かどうか */
+    public boolean isGunnerGun() {
         return switch (this) {
-            case HANDGUN, ASSAULT_RIFLE, SHOTGUN, GATLING, GRENADE_GUN,
-                 EAGLET, LIGHTNING, IBIS -> true;
+            case HANDGUN, ASSAULT_RIFLE, SHOTGUN, GATLING, GRENADE_GUN -> true;
             default -> false;
         };
+    }
+
+    /** isGunnerAmmo: ガンナー弾薬として設定可能な弾種かどうか */
+    public boolean isGunnerAmmo() {
+        return switch (this) {
+            case ASTEROID, METEORA, VIPER, HOUND -> true;
+            default -> false;
+        };
+    }
+
+    /** isSniperAmmo: スナイパー弾薬として設定可能な弾種かどうか */
+    public boolean isSniperAmmo() {
+        return this == RED_BULLET;
+    }
+
+    /** isGun: スコープ対応の銃系武器かどうか（スナイパーのみ） */
+    public boolean isGun() {
+        return isSniper();
     }
 
     /** isSniper: スナイパー系（高倍率スコープ）かどうか */
@@ -82,5 +99,15 @@ public enum WeaponType {
                  EAGLET, LIGHTNING, IBIS, ESCUDO -> true;
             default -> false;
         };
+    }
+
+    /** configKey からWeaponTypeを検索する（null = 未知のキー） */
+    @org.jetbrains.annotations.Nullable
+    public static WeaponType fromConfigKey(String key) {
+        if (key == null || key.isEmpty()) return null;
+        for (WeaponType t : values()) {
+            if (t.configKey.equals(key)) return t;
+        }
+        return null;
     }
 }

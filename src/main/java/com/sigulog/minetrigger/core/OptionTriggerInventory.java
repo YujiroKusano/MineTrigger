@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
  */
 public class OptionTriggerInventory extends SimpleInventory {
 
-    public static final int SIZE = 6;
+    public static final int SIZE = 5;
 
     public OptionTriggerInventory() {
         super(SIZE);
@@ -19,7 +19,7 @@ public class OptionTriggerInventory extends SimpleInventory {
     @Override
     public boolean isValid(int slot, ItemStack stack) {
         if (stack.isEmpty()) return true;
-        return stack.getItem() instanceof WeaponItem wi && wi.getWeaponType().isOption();
+        return stack.getItem() instanceof WeaponItem; // WeaponItemならOK（isOption()不問）
     }
 
     @Override
