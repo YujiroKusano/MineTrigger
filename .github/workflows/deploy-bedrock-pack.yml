@@ -28,31 +28,3 @@ jobs:
           rsync -avz --delete \
             bedrock/behavior_pack/ \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/minecraft/server/behavior_packs/minetrigger/"
-
-      - name: TEMP diagnose world_behavior_packs.json persistence
-        run: |
-          cat > /tmp/diagnose.sh << 'SCRIPT'
-          #!/usr/bin/env bash
-          set -x
-          echo "=== systemctl cat minecraft-server.service ==="
-          systemctl cat minecraft-server.service
-          echo "=== recreate world_behavior_packs.json ==="
-          mkdir -p "/opt/minecraft/server/worlds/Bedrock level"
-          cat > "/opt/minecraft/server/worlds/Bedrock level/world_behavior_packs.json" << 'JSON'
-          [
-            {
-              "pack_id": "1c5c27b2-a388-4c68-b156-444fd2b8f421",
-              "version": [0, 1, 2]
-            }
-          ]
-          JSON
-          echo "=== restart via systemctl ==="
-          systemctl restart minecraft-server.service
-          sleep 8
-          echo "=== check file survived after restart ==="
-          cat "/opt/minecraft/server/worlds/Bedrock level/world_behavior_packs.json" || echo "FILE MISSING AFTER RESTART"
-          echo "=== tail latest.log ==="
-          tail -n 60 /opt/minecraft/server/latest.log
-          SCRIPT
-          scp -o StrictHostKeyChecking=no /tmp/diagnose.sh "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/tmp/diagnose.sh"
-          ssh -o StrictHostKeyChecking=no "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" "bash /tmp/diagnose.sh"
