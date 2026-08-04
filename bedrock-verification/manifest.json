@@ -1,0 +1,30 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "MineTrigger Input Verification",
+    "description": "doc/BedrockControlSpec.md の未検証項目（4-1案D / 4-4 / 4-5）を実機で確認するための使い捨てテストパック",
+    "uuid": "a2aa9ffd-6405-4a6f-921a-eaed2ca0f664",
+    "version": [0, 1, 0],
+    "min_engine_version": [1, 21, 0]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "630fb77e-4bbe-4b5e-a908-57d89f31610b",
+      "version": [0, 1, 0]
+    },
+    {
+      "type": "script",
+      "language": "javascript",
+      "uuid": "948cf4cc-c723-4fb1-819d-1488c234b385",
+      "version": [0, 1, 0],
+      "entry": "scripts/main.js"
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "1.15.0"
+    }
+  ]
+}
