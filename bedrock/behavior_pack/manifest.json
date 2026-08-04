@@ -1,0 +1,30 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "MineTrigger (Bedrock)",
+    "description": "MineTrigger Bedrock Edition rebuild - first pass (trion system + handgun + kogetsu)",
+    "uuid": "1c5c27b2-a388-4c68-b156-444fd2b8f421",
+    "version": [0, 1, 2],
+    "min_engine_version": [1, 21, 0]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "8d640f78-4998-4d65-90b2-093678bb865c",
+      "version": [0, 1, 2]
+    },
+    {
+      "type": "script",
+      "language": "javascript",
+      "uuid": "ed1898aa-1677-45dc-b82c-e4fd707cc3cb",
+      "version": [0, 1, 2],
+      "entry": "scripts/main.js"
+    }
+  ],
+  "dependencies": [
+    {
+      "module_name": "@minecraft/server",
+      "version": "1.15.0"
+    }
+  ]
+}
