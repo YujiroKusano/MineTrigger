@@ -28,3 +28,22 @@ jobs:
           rsync -avz --delete \
             bedrock/behavior_pack/ \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/minecraft/server/behavior_packs/minetrigger/"
+
+      - name: TEMP investigate server version update mechanism
+        run: |
+          cat > /tmp/versioncheck.sh << 'SCRIPT'
+          #!/usr/bin/env bash
+          set -x
+          echo "=== current bedrock_server version ==="
+          grep -m1 "Version:" /opt/minecraft/server/latest.log
+          echo "=== minecraft-related systemd units ==="
+          systemctl list-units --all | grep -i minecraft
+          echo "=== minecraft-version.timer status ==="
+          systemctl status minecraft-version.timer --no-pager || true
+          echo "=== minecraft-version.service status ==="
+          systemctl status minecraft-version.service --no-pager || true
+          echo "=== minecraft-version.service unit file ==="
+          systemctl cat minecraft-version.service || true
+          SCRIPT
+          scp -o StrictHostKeyChecking=no /tmp/versioncheck.sh "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/tmp/versioncheck.sh"
+          ssh -o StrictHostKeyChecking=no "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" "bash /tmp/versioncheck.sh"
