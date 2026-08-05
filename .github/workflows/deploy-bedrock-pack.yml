@@ -29,7 +29,15 @@ jobs:
             bedrock/behavior_pack/ \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/minecraft/server/behavior_packs/minetrigger/"
 
-      - name: TEMP check server.properties auth-related settings
+      - name: TEMP add player to allowlist via server console
         run: |
-          ssh -o StrictHostKeyChecking=no "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
-            "grep -E 'online-mode|xbox-live|allow-list|allowlist' /opt/minecraft/server/server.properties"
+          cat > /tmp/add_allowlist.sh << 'SCRIPT'
+          #!/usr/bin/env bash
+          set -x
+          screen -S minecraft -X stuff $'allowlist add Yujiro1106\r'
+          sleep 2
+          echo "=== allowlist.json ==="
+          cat /opt/minecraft/server/allowlist.json
+          SCRIPT
+          scp -o StrictHostKeyChecking=no /tmp/add_allowlist.sh "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/tmp/add_allowlist.sh"
+          ssh -o StrictHostKeyChecking=no "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" "bash /tmp/add_allowlist.sh"
