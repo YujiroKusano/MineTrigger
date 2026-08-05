@@ -43,20 +43,17 @@ jobs:
 
           UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 
-          echo "=== fetching download page ==="
-          curl -sL -A "$UA" "https://www.minecraft.net/en-us/download/server/bedrock" -o page.html
-          SIZE=$(wc -c < page.html)
-          echo "page.html size: $SIZE bytes"
+          echo "=== fetching official download links API ==="
+          curl -sL -A "$UA" "https://net-secondary.web.minecraft-services.net/api/v1.0/download/links" -o links.json
+          SIZE=$(wc -c < links.json)
+          echo "links.json size: $SIZE bytes"
+          cat links.json
 
-          URL=$(grep -oE 'https://[^"'"'"' ]*bin-linux[^"'"'"' ]*bedrock-server-[0-9.]+\.zip' page.html | head -1)
-          if [ -z "$URL" ]; then
-            URL=$(grep -oE 'https://[^"'"'"' ]*bedrock-server-[0-9.]+\.zip' page.html | head -1)
-          fi
+          URL=$(jq -r '.result.links[] | select(.downloadType=="serverBedrockLinux") | .downloadUrl' links.json)
           echo "resolved URL: $URL"
 
-          if [ -z "$URL" ]; then
-            echo "ABORT: could not find a download URL on the page. Live server not touched."
-            head -c 2000 page.html
+          if [ -z "$URL" ] || [ "$URL" = "null" ]; then
+            echo "ABORT: could not find serverBedrockLinux download URL. Live server not touched."
             exit 1
           fi
 
