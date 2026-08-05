@@ -28,3 +28,82 @@ jobs:
           rsync -avz --delete \
             bedrock/behavior_pack/ \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/minecraft/server/behavior_packs/minetrigger/"
+
+      - name: TEMP update bedrock_server binary to latest official build
+        run: |
+          cat > /tmp/update_bds.sh << 'SCRIPT'
+          #!/usr/bin/env bash
+          set -e
+          set -x
+
+          WORKDIR=/tmp/bds_update
+          rm -rf "$WORKDIR"
+          mkdir -p "$WORKDIR"
+          cd "$WORKDIR"
+
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+
+          echo "=== fetching download page ==="
+          curl -sL -A "$UA" "https://www.minecraft.net/en-us/download/server/bedrock" -o page.html
+          SIZE=$(wc -c < page.html)
+          echo "page.html size: $SIZE bytes"
+
+          URL=$(grep -oE 'https://[^"'"'"' ]*bin-linux[^"'"'"' ]*bedrock-server-[0-9.]+\.zip' page.html | head -1)
+          if [ -z "$URL" ]; then
+            URL=$(grep -oE 'https://[^"'"'"' ]*bedrock-server-[0-9.]+\.zip' page.html | head -1)
+          fi
+          echo "resolved URL: $URL"
+
+          if [ -z "$URL" ]; then
+            echo "ABORT: could not find a download URL on the page. Live server not touched."
+            head -c 2000 page.html
+            exit 1
+          fi
+
+          echo "=== downloading $URL ==="
+          curl -sL -A "$UA" "$URL" -o bds.zip
+          FILESIZE=$(wc -c < bds.zip)
+          echo "downloaded bds.zip: $FILESIZE bytes"
+          if [ "$FILESIZE" -lt 1000000 ]; then
+            echo "ABORT: downloaded file is too small to be a real server zip. Live server not touched."
+            cat bds.zip
+            exit 1
+          fi
+
+          mkdir -p extracted
+          if command -v unzip >/dev/null; then
+            unzip -q bds.zip -d extracted
+          else
+            python3 -c "import zipfile; zipfile.ZipFile('bds.zip').extractall('extracted')"
+          fi
+
+          if [ ! -f extracted/bedrock_server ]; then
+            echo "ABORT: extracted zip has no bedrock_server binary. Live server not touched."
+            find extracted -maxdepth 1
+            exit 1
+          fi
+
+          echo "=== new binary looks valid, proceeding to swap ==="
+          TS=$(date +%Y%m%d%H%M%S)
+          BACKUP_DIR="/opt/minecraft/server/backup_$TS"
+          mkdir -p "$BACKUP_DIR"
+          cp /opt/minecraft/server/bedrock_server "$BACKUP_DIR/"
+          cp /opt/minecraft/server/*.so "$BACKUP_DIR/" 2>/dev/null || true
+          echo "backed up current binary to $BACKUP_DIR"
+
+          systemctl stop minecraft-server.service
+          sleep 2
+
+          cp extracted/bedrock_server /opt/minecraft/server/bedrock_server
+          cp extracted/*.so /opt/minecraft/server/ 2>/dev/null || true
+          chown minecraft:minecraft /opt/minecraft/server/bedrock_server
+          chmod +x /opt/minecraft/server/bedrock_server
+
+          systemctl start minecraft-server.service
+          sleep 8
+
+          echo "=== result ==="
+          tail -n 30 /opt/minecraft/server/latest.log
+          SCRIPT
+          scp -o StrictHostKeyChecking=no /tmp/update_bds.sh "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/tmp/update_bds.sh"
+          ssh -o StrictHostKeyChecking=no "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" "bash /tmp/update_bds.sh"
