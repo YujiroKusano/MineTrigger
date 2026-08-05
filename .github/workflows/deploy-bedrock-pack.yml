@@ -28,23 +28,3 @@ jobs:
           rsync -avz --delete \
             bedrock/behavior_pack/ \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/opt/minecraft/server/behavior_packs/minetrigger/"
-
-      - name: TEMP verify bedrock_server status after binary swap
-        run: |
-          cat > /tmp/verify.sh << 'SCRIPT'
-          #!/usr/bin/env bash
-          set -x
-          echo "=== service status ==="
-          systemctl status minecraft-server.service --no-pager
-          echo "=== process ==="
-          ps aux | grep bedrock_server | grep -v grep
-          echo "=== port ==="
-          ss -ulnp | grep 19132
-          echo "=== log size and version line ==="
-          wc -l /opt/minecraft/server/latest.log
-          grep "Version:" /opt/minecraft/server/latest.log
-          echo "=== full recent log ==="
-          tail -n 50 /opt/minecraft/server/latest.log
-          SCRIPT
-          scp -o StrictHostKeyChecking=no /tmp/verify.sh "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/tmp/verify.sh"
-          ssh -o StrictHostKeyChecking=no "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" "bash /tmp/verify.sh"
