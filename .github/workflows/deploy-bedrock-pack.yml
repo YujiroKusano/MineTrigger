@@ -49,7 +49,13 @@ jobs:
           echo "links.json size: $SIZE bytes"
           cat links.json
 
-          URL=$(jq -r '.result.links[] | select(.downloadType=="serverBedrockLinux") | .downloadUrl' links.json)
+          URL=$(python3 -c "
+          import json
+          data = json.load(open('links.json'))
+          for link in data['result']['links']:
+              if link['downloadType'] == 'serverBedrockLinux':
+                  print(link['downloadUrl'])
+          ")
           echo "resolved URL: $URL"
 
           if [ -z "$URL" ] || [ "$URL" = "null" ]; then
