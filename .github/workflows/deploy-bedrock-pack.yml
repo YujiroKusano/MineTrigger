@@ -34,7 +34,7 @@ jobs:
           cat > /tmp/add_allowlist.sh << 'SCRIPT'
           #!/usr/bin/env bash
           set -x
-          screen -S minecraft -X stuff $'allowlist add Yujiro1106\r'
+          sudo -u minecraft screen -S minecraft -X stuff $'allowlist add Yujiro1106\r'
           sleep 2
           echo "=== allowlist.json ==="
           cat /opt/minecraft/server/allowlist.json
